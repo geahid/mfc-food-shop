@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menu — MFC Food Shop</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container navbar-inner">
+      <a href="/" class="navbar-logo">
+        <div class="logo-icon">🍽</div>
+        <span class="logo-text">MFC <span>Food</span></span>
+      </a>
+      <div class="navbar-nav">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/menu" class="nav-link active">Menu</a>
+        <a href="/orders" class="nav-link">Orders</a>
+        <a href="/profile" class="nav-link">Profile</a>
+      </div>
+      <div class="navbar-actions">
+        <button id="cartBtn" class="cart-btn">🛒<span class="cart-badge" id="cartBadge" style="display:none">0</span></button>
+        <a href="/login" id="loginBtn" class="btn btn-primary btn-sm">Sign In</a>
+        <button id="userBtn" class="btn btn-outline btn-sm" style="display:none" onclick="window.location.href='/profile'"></button>
+        <button id="mobileMenuBtn" class="mobile-menu-btn">☰</button>
+      </div>
+    </div>
+  </nav>
+  <div id="mobileNav" class="mobile-nav">
+    <a href="/" class="nav-link">Home</a>
+    <a href="/menu" class="nav-link active">Menu</a>
+    <a href="/orders" class="nav-link">Orders</a>
+    <a href="/profile" class="nav-link">Profile</a>
+    <a href="/login" class="nav-link">Sign In</a>
+  </div>
+
+  <div class="page-content">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="container">
+        <div class="breadcrumb"><a href="/">Home</a><span class="breadcrumb-sep">›</span>Menu</div>
+        <h1>Our Full Menu</h1>
+        <p>Explore all dishes crafted by our expert chefs</p>
+      </div>
+    </div>
+
+    <!-- Categories Strip -->
+    <div class="categories-strip">
+      <div class="container">
+        <div id="categoriesScroll" class="categories-scroll"></div>
+      </div>
+    </div>
+
+    <!-- Menu Content -->
+    <section class="section">
+      <div class="container">
+        <div class="filter-bar">
+          <div class="search-bar" style="flex:1;max-width:360px">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" placeholder="Search dishes, categories...">
+          </div>
+          <select id="sortSelect" class="filter-select">
+            <option value="default">Sort: Default</option>
+            <option value="rating">Highest Rated</option>
+            <option value="price_asc">Price: Low to High</option>
+            <option value="price_desc">Price: High to Low</option>
+          </select>
+          <span id="resultCount" style="font-size:.85rem;color:var(--gray-500);white-space:nowrap"></span>
+        </div>
+        <div id="menuGrid" class="food-grid"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Product Modal -->
+  <div id="productModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Item Details</h3>
+        <button onclick="closeModal()" style="width:32px;height:32px;border-radius:50%;background:var(--gray-100);display:flex;align-items:center;justify-content:center;font-size:.9rem">✕</button>
+      </div>
+      <div class="modal-body" id="modalContent"></div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <span>© 2025 MFC Food Shop. All rights reserved.</span>
+        <a href="/" style="color:rgba(255,255,255,.5)">Back to Home</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Cart -->
+  <div id="cartOverlay" class="cart-overlay"></div>
+  <div id="cartSidebar" class="cart-sidebar">
+    <div class="cart-header"><h3>🛒 Your Cart</h3><button id="cartClose" class="cart-close">✕</button></div>
+    <div id="cartItems" class="cart-items"></div>
+    <div id="cartFooter" class="cart-footer" style="display:none">
+      <div id="cartTotals" class="cart-totals"></div>
+      <a href="/checkout" class="btn btn-primary" style="width:100%;justify-content:center">Checkout →</a>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script src="/js/menu.js"></script>
+  <script>
+    // Handle URL category param
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const cat = params.get('cat');
+      if (cat) {
+        setTimeout(() => filterByCategory(cat), 500);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage — MFC Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/admin.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body>
+  <div class="admin-wrapper">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="admin-logo">
+        <div class="logo-icon">🍽</div>
+        <div><span class="logo-text">MFC Food</span><span class="logo-sub">Admin Panel</span></div>
+      </div>
+      <nav class="admin-sidebar-nav">
+        <div class="admin-nav-group">
+          <div class="admin-nav-label">Overview</div>
+          <a href="/admin" class="admin-nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+        </div>
+        <div class="admin-nav-group">
+          <div class="admin-nav-label">Manage</div>
+          <a href="/admin/products" class="admin-nav-item" id="nav-products"><span class="nav-icon">🍽️</span> Products</a>
+          <a href="/admin/orders" class="admin-nav-item" id="nav-orders"><span class="nav-icon">📦</span> Orders</a>
+          <a href="/admin/users" class="admin-nav-item" id="nav-users"><span class="nav-icon">👥</span> Users</a>
+          <a href="/admin/categories" class="admin-nav-item" id="nav-categories"><span class="nav-icon">🏷️</span> Categories</a>
+          <a href="/admin/offers" class="admin-nav-item" id="nav-offers"><span class="nav-icon">🎁</span> Offers</a>
+        </div>
+        <div class="admin-nav-group">
+          <div class="admin-nav-label">Site</div>
+          <a href="/" class="admin-nav-item"><span class="nav-icon">🏠</span> View Store</a>
+          <a href="#" class="admin-nav-item" onclick="adminLogout()"><span class="nav-icon">🚪</span> Sign Out</a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-topbar">
+        <div class="admin-topbar-left">
+          <h2 id="pageTitle">Loading...</h2>
+          <p id="pageDesc" style="font-size:.78rem;color:var(--gray-500)"></p>
+        </div>
+        <div class="admin-topbar-right">
+          <div class="admin-user-chip">
+            <div class="avatar">A</div>
+            <span class="name" id="adminUserName">Admin</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-content" id="adminContent">
+        <div class="loading"><div class="spinner"></div></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ===== Product Modal ===== -->
+  <div id="productModal" class="modal-overlay">
+    <div class="modal" style="max-width:600px">
+      <div class="modal-header">
+        <h3 id="productFormTitle">Add Product</h3>
+        <button onclick="closeProductModal()" style="width:32px;height:32px;border-radius:50%;background:var(--gray-100);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="productForm">
+          <input type="hidden" id="editProductId">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Product Name *</label>
+              <input type="text" class="form-control" id="pName" required placeholder="e.g. Classic Burger">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Category *</label>
+              <select class="form-control" id="pCategory" required>
+                <option value="">Select category</option>
+                <option value="burgers">Burgers</option>
+                <option value="chicken">Chicken</option>
+                <option value="pizza">Pizza</option>
+                <option value="sushi">Sushi</option>
+                <option value="salads">Salads</option>
+                <option value="bowls">Bowls</option>
+                <option value="pasta">Pasta</option>
+                <option value="curries">Curries</option>
+                <option value="wraps">Wraps</option>
+                <option value="sides">Sides</option>
+                <option value="desserts">Desserts</option>
+                <option value="drinks">Drinks</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Price ($) *</label>
+              <input type="number" class="form-control" id="pPrice" required placeholder="12.99" step="0.01" min="0">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Original Price ($)</label>
+              <input type="number" class="form-control" id="pOriginalPrice" placeholder="15.99 (optional)" step="0.01" min="0">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Calories</label>
+              <input type="text" class="form-control" id="pCalories" placeholder="e.g. 650">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Prep Time</label>
+              <input type="text" class="form-control" id="pPrepTime" placeholder="e.g. 15 min">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Image URL</label>
+            <input type="text" class="form-control" id="pImage" placeholder="https://images.unsplash.com/...">
+            <span class="form-hint">Use an Unsplash URL for best results (e.g. https://images.unsplash.com/photo-xxx?w=400&h=300&fit=crop)</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description *</label>
+            <textarea class="form-control" id="pDescription" required rows="3" placeholder="Describe the dish..."></textarea>
+          </div>
+          <div style="display:flex;gap:24px;margin-top:4px">
+            <label style="display:flex;align-items:center;gap:8px;font-size:.875rem;cursor:pointer">
+              <input type="checkbox" id="pFeatured" style="width:16px;height:16px;accent-color:var(--charcoal)"> Featured item
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:.875rem;cursor:pointer">
+              <input type="checkbox" id="pAvailable" checked style="width:16px;height:16px;accent-color:var(--green)"> Available
+            </label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" onclick="closeProductModal()" class="btn btn-ghost">Cancel</button>
+        <button type="submit" form="productForm" class="btn btn-primary">Save Product</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Order Detail Modal ===== -->
+  <div id="orderDetailModal" class="modal-overlay">
+    <div class="modal" style="max-width:640px">
+      <div class="modal-header">
+        <h3>Order Details</h3>
+        <button onclick="closeModal('orderDetailModal')" style="width:32px;height:32px;border-radius:50%;background:var(--gray-100);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none">✕</button>
+      </div>
+      <div class="modal-body" id="orderDetailContent"></div>
+      <div class="modal-footer">
+        <button onclick="closeModal('orderDetailModal')" class="btn btn-ghost">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script src="/js/admin.js"></script>
+  <script>
+    // ===== Page Router =====
+    const SECTIONS = {
+      '/admin/products': {
+        title: 'Products',
+        desc: 'Add, edit, and manage your menu items',
+        nav: 'nav-products',
+        load: loadAdminProducts,
+        render: renderProductsPage
+      },
+      '/admin/orders': {
+        title: 'Orders',
+        desc: 'View and manage customer orders',
+        nav: 'nav-orders',
+        load: loadAdminOrders,
+        render: renderOrdersPage
+      },
+      '/admin/users': {
+        title: 'Users',
+        desc: 'Manage registered customers',
+        nav: 'nav-users',
+        load: loadAdminUsers,
+        render: renderUsersPage
+      },
+      '/admin/categories': {
+        title: 'Categories',
+        desc: 'Manage food categories',
+        nav: 'nav-categories',
+        load: loadAdminCategories,
+        render: renderCategoriesPage
+      },
+      '/admin/offers': {
+        title: 'Offers & Promotions',
+        desc: 'Manage discount codes and banners',
+        nav: 'nav-offers',
+        load: loadAdminOffers,
+        render: renderOffersPage
+      }
+    };
+
+    function renderProductsPage() {
+      return `
+        <div class="admin-toolbar">
+          <div class="search-bar" style="max-width:320px">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="adminSearchInput" placeholder="Search products...">
+          </div>
+          <button onclick="openAddProduct()" class="btn btn-primary btn-sm">+ Add Product</button>
+        </div>
+        <div class="admin-card">
+          <div style="overflow-x:auto">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Price</th>
+                  <th>Rating</th>
+                  <th>Reviews</th>
+                  <th>Available</th>
+                  <th>Featured</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="productsBody">
+                <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--gray-300)">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>`;
+    }
+
+    function renderOrdersPage() {
+      return `
+        <div class="admin-toolbar">
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button onclick="filterOrders('all')" class="btn btn-ghost btn-sm order-filter-btn active" data-status="all">All</button>
+            <button onclick="filterOrders('pending')" class="btn btn-ghost btn-sm order-filter-btn" data-status="pending">Pending</button>
+            <button onclick="filterOrders('confirmed')" class="btn btn-ghost btn-sm order-filter-btn" data-status="confirmed">Confirmed</button>
+            <button onclick="filterOrders('preparing')" class="btn btn-ghost btn-sm order-filter-btn" data-status="preparing">Preparing</button>
+            <button onclick="filterOrders('delivered')" class="btn btn-ghost btn-sm order-filter-btn" data-status="delivered">Delivered</button>
+            <button onclick="filterOrders('cancelled')" class="btn btn-ghost btn-sm order-filter-btn" data-status="cancelled">Cancelled</button>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div style="overflow-x:auto">
+            <table class="admin-table">
+              <thead>
+                <tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="ordersBody">
+                <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--gray-300)">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>`;
+    }
+
+    function renderUsersPage() {
+      return `
+        <div class="admin-card">
+          <div style="overflow-x:auto">
+            <table class="admin-table">
+              <thead>
+                <tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Joined</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="usersBody">
+                <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--gray-300)">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>`;
+    }
+
+    function renderCategoriesPage() {
+      return `
+        <div class="admin-toolbar">
+          <span style="font-size:.875rem;color:var(--gray-500)">Manage food categories shown on the menu</span>
+          <button onclick="addCategory()" class="btn btn-primary btn-sm">+ Add Category</button>
+        </div>
+        <div class="admin-card">
+          <div style="overflow-x:auto">
+            <table class="admin-table">
+              <thead>
+                <tr><th>Icon</th><th>Name</th><th>Items</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="categoriesBody">
+                <tr><td colspan="4" style="text-align:center;padding:40px;color:var(--gray-300)">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>`;
+    }
+
+    function renderOffersPage() {
+      return `
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h3>Active Promotions</h3>
+            <span style="font-size:.8rem;color:var(--gray-500)">Toggle offers on/off as needed</span>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="admin-table">
+              <thead>
+                <tr><th>Title</th><th>Code</th><th>Discount</th><th>Active</th><th>Expires</th></tr>
+              </thead>
+              <tbody id="offersBody">
+                <tr><td colspan="5" style="text-align:center;padding:40px;color:var(--gray-300)">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>`;
+    }
+
+    // Order filter
+    function filterOrders(status) {
+      document.querySelectorAll('.order-filter-btn').forEach(b => b.classList.toggle('active', b.dataset.status === status));
+      if (status === 'all') renderAdminOrders(adminOrders);
+      else renderAdminOrders(adminOrders.filter(o => o.status === status));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!requireAdmin()) return;
+
+      const user = Auth.getUser();
+      if (user) document.getElementById('adminUserName').textContent = user.name;
+
+      const path = window.location.pathname;
+      const section = SECTIONS[path];
+
+      if (!section) {
+        window.location.href = '/admin';
+        return;
+      }
+
+      // Set page title
+      document.title = section.title + ' — MFC Admin';
+      document.getElementById('pageTitle').textContent = section.title;
+      document.getElementById('pageDesc').textContent = section.desc;
+
+      // Highlight nav
+      document.getElementById(section.nav)?.classList.add('active');
+
+      // Render page HTML
+      document.getElementById('adminContent').innerHTML = section.render();
+
+      // Load data
+      section.load();
+
+      // Wire up search input if present
+      document.getElementById('adminSearchInput')?.addEventListener('input', e => searchProducts(e.target.value));
+
+      // Close modals on overlay click
+      document.querySelectorAll('.modal-overlay').forEach(mo => {
+        mo.addEventListener('click', e => { if (e.target === mo) mo.classList.remove('open'); });
+      });
+    });
+  </script>
+</body>
+</html>

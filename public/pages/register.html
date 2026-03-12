@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register — MFC Food Shop</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <a href="/"><div class="logo-icon">🍽</div></a>
+        <h2>Create Account</h2>
+        <p>Join MFC Food Shop and get $5 off your first order</p>
+      </div>
+
+      <div id="regError" style="display:none;background:#FEE2E2;color:#991B1B;padding:12px 16px;border-radius:8px;font-size:.875rem;margin-bottom:16px"></div>
+
+      <form id="registerForm">
+        <div class="form-group">
+          <label class="form-label" for="regName">Full Name</label>
+          <input type="text" class="form-control" id="regName" required placeholder="John Doe">
+          <span class="form-error" data-for="regName"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="regEmail">Email Address</label>
+          <input type="email" class="form-control" id="regEmail" required placeholder="john@example.com">
+          <span class="form-error" data-for="regEmail"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="regPhone">Phone Number</label>
+          <input type="tel" class="form-control" id="regPhone" placeholder="+1 555-000-0000">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="regPassword">Password</label>
+          <input type="password" class="form-control" id="regPassword" required placeholder="Min. 6 characters">
+          <span class="form-error" data-for="regPassword"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="regConfirm">Confirm Password</label>
+          <input type="password" class="form-control" id="regConfirm" required placeholder="Repeat password">
+          <span class="form-error" id="confirmError"></span>
+        </div>
+        <p style="font-size:.78rem;color:var(--gray-500);margin-bottom:16px">By registering you agree to our Terms of Service and Privacy Policy</p>
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center">Create Account</button>
+      </form>
+
+      <div class="auth-footer">Already have an account? <a href="/login">Sign in</a></div>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script src="/js/auth.js"></script>
+</body>
+</html>

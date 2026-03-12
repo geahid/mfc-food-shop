@@ -1,0 +1,118 @@
+/* ===== MFC Food Shop — Responsive Styles ===== */
+
+/* ===== Large Desktop ===== */
+@media (max-width: 1280px) {
+  .footer-grid { grid-template-columns: 1.5fr 1fr 1fr 1.5fr; gap: 32px; }
+}
+
+/* ===== Desktop / Laptop ===== */
+@media (max-width: 1024px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .checkout-grid { grid-template-columns: 1fr; }
+  .profile-grid { grid-template-columns: 1fr; }
+  .profile-sidebar { display: none; }
+  .order-summary { position: static; }
+}
+
+/* ===== Tablet ===== */
+@media (max-width: 768px) {
+  .container { padding: 0 16px; }
+  .section { padding: 56px 0; }
+  .section-sm { padding: 32px 0; }
+
+  /* Navbar */
+  .navbar-nav { display: none; }
+  .navbar-actions .btn { display: none; }
+  .mobile-menu-btn { display: flex; }
+
+  /* Hero */
+  .hero { min-height: 70vh; }
+  .hero-stats { gap: 24px; flex-wrap: wrap; }
+
+  /* Grid */
+  .grid-2 { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: 1fr 1fr; }
+  .food-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+
+  /* Promo */
+  .promo-grid { grid-template-columns: 1fr; }
+
+  /* Cart Sidebar */
+  .cart-sidebar { width: 100%; right: -100%; }
+
+  /* Footer */
+  .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+  .footer-bottom { flex-direction: column; gap: 14px; text-align: center; }
+}
+
+/* ===== Mobile ===== */
+@media (max-width: 480px) {
+  h1 { font-size: 1.8rem; }
+  h2 { font-size: 1.5rem; }
+  .section { padding: 40px 0; }
+
+  /* Navbar */
+  .navbar-logo .logo-text { font-size: 1.1rem; }
+
+  /* Hero */
+  .hero { min-height: 60vh; padding: 40px 0; }
+  .hero-actions { flex-direction: column; }
+  .hero-actions .btn { width: 100%; justify-content: center; }
+  .hero-stats { display: none; }
+
+  /* Food Grid */
+  .food-grid { grid-template-columns: 1fr; }
+
+  /* Grid */
+  .grid-3 { grid-template-columns: 1fr; }
+  .grid-4 { grid-template-columns: 1fr; }
+
+  /* Auth */
+  .auth-card { padding: 28px 20px; }
+
+  /* Checkout */
+  .payment-options { flex-direction: column; }
+
+  /* Tables */
+  table { font-size: 0.8rem; }
+  thead th, tbody td { padding: 10px 12px; }
+
+  /* Filter bar */
+  .filter-bar { flex-direction: column; align-items: stretch; }
+  .search-bar { max-width: 100%; }
+  .filter-select { width: 100%; }
+
+  /* Cart */
+  .cart-header { padding: 16px; }
+  .cart-items { padding: 10px; }
+  .cart-footer { padding: 14px; }
+
+  /* Modal */
+  .modal-body { padding: 20px; }
+  .modal-header { padding: 18px 20px; }
+  .modal-footer { padding: 14px 20px; }
+}
+
+/* ===== Admin Responsive ===== */
+@media (max-width: 1024px) {
+  .admin-layout { flex-direction: column; }
+  .admin-sidebar { width: 100%; height: auto; position: relative; top: auto; }
+  .admin-sidebar-nav { flex-direction: row; overflow-x: auto; padding: 8px 12px; gap: 4px; }
+  .admin-main { padding: 20px 16px; }
+  .admin-stats-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 640px) {
+  .admin-stats-grid { grid-template-columns: 1fr; }
+  .admin-toolbar { flex-direction: column; align-items: stretch; }
+  .admin-toolbar .search-bar { max-width: 100%; }
+}
+
+/* ===== Utility Responsive ===== */
+.hide-mobile { display: block; }
+.show-mobile { display: none; }
+@media (max-width: 768px) {
+  .hide-mobile { display: none; }
+  .show-mobile { display: block; }
+}

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout — MFC Food Shop</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container navbar-inner">
+      <a href="/" class="navbar-logo"><div class="logo-icon">🍽</div><span class="logo-text">MFC <span>Food</span></span></a>
+      <div class="navbar-nav"><a href="/" class="nav-link">Home</a><a href="/menu" class="nav-link">Menu</a></div>
+      <div class="navbar-actions">
+        <button id="cartBtn" class="cart-btn">🛒<span class="cart-badge" id="cartBadge" style="display:none">0</span></button>
+        <a href="/login" id="loginBtn" class="btn btn-primary btn-sm">Sign In</a>
+        <button id="userBtn" class="btn btn-outline btn-sm" style="display:none"></button>
+        <button id="mobileMenuBtn" class="mobile-menu-btn">☰</button>
+      </div>
+    </div>
+  </nav>
+  <div id="mobileNav" class="mobile-nav">
+    <a href="/" class="nav-link">Home</a><a href="/menu" class="nav-link">Menu</a>
+  </div>
+
+  <div class="page-content">
+    <div class="page-header">
+      <div class="container">
+        <div class="breadcrumb"><a href="/">Home</a><span class="breadcrumb-sep">›</span><a href="/cart">Cart</a><span class="breadcrumb-sep">›</span>Checkout</div>
+        <h1>Checkout</h1>
+      </div>
+    </div>
+
+    <section class="section">
+      <div class="container">
+        <form id="checkoutForm">
+          <div class="checkout-grid">
+            <!-- Left: Form -->
+            <div>
+              <!-- Contact -->
+              <div class="checkout-card">
+                <h3>Contact Information</h3>
+                <div class="grid-2">
+                  <div class="form-group">
+                    <label class="form-label" for="chkName">Full Name *</label>
+                    <input type="text" class="form-control" id="chkName" required placeholder="John Doe">
+                    <span class="form-error" data-for="chkName"></span>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="chkEmail">Email *</label>
+                    <input type="email" class="form-control" id="chkEmail" required placeholder="john@example.com">
+                    <span class="form-error" data-for="chkEmail"></span>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="chkPhone">Phone *</label>
+                    <input type="tel" class="form-control" id="chkPhone" required placeholder="+1 555-000-0000">
+                    <span class="form-error" data-for="chkPhone"></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Delivery -->
+              <div class="checkout-card">
+                <h3>Delivery Address</h3>
+                <div class="form-group">
+                  <label class="form-label" for="chkAddress">Street Address *</label>
+                  <input type="text" class="form-control" id="chkAddress" required placeholder="123 Main Street">
+                  <span class="form-error" data-for="chkAddress"></span>
+                </div>
+                <div class="grid-2">
+                  <div class="form-group">
+                    <label class="form-label" for="chkCity">City *</label>
+                    <input type="text" class="form-control" id="chkCity" required placeholder="New York">
+                    <span class="form-error" data-for="chkCity"></span>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="chkZip">ZIP Code</label>
+                    <input type="text" class="form-control" id="chkZip" placeholder="10001">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Payment -->
+              <div class="checkout-card">
+                <h3>Payment Method</h3>
+                <div class="payment-options">
+                  <label class="payment-option selected" data-value="card">
+                    <input type="radio" name="payment" value="card" checked>
+                    💳 Credit Card
+                  </label>
+                  <label class="payment-option" data-value="cash">
+                    <input type="radio" name="payment" value="cash">
+                    💵 Cash on Delivery
+                  </label>
+                  <label class="payment-option" data-value="paypal">
+                    <input type="radio" name="payment" value="paypal">
+                    🅿️ PayPal
+                  </label>
+                </div>
+                <div id="cardFields" style="margin-top:20px">
+                  <div class="form-group">
+                    <label class="form-label">Card Number</label>
+                    <input type="text" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19">
+                  </div>
+                  <div class="grid-2">
+                    <div class="form-group">
+                      <label class="form-label">Expiry</label>
+                      <input type="text" class="form-control" placeholder="MM/YY" maxlength="5">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">CVV</label>
+                      <input type="text" class="form-control" placeholder="123" maxlength="4">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Notes -->
+              <div class="checkout-card">
+                <h3>Order Notes (Optional)</h3>
+                <textarea class="form-control" id="chkNotes" placeholder="Special instructions, allergies, or requests..."></textarea>
+              </div>
+            </div>
+
+            <!-- Right: Summary -->
+            <div class="order-summary">
+              <h3>Order Summary</h3>
+              <div class="summary-items" id="summaryItemsList"></div>
+
+              <!-- Coupon -->
+              <div class="coupon-input">
+                <input type="text" id="couponField" placeholder="Coupon code">
+                <button type="button" onclick="applyCoupon()" class="btn btn-ghost btn-sm">Apply</button>
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+                <div style="display:flex;justify-content:space-between;font-size:.9rem;color:var(--gray-500)"><span>Subtotal</span><span id="chkSubtotal">—</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:.9rem;color:var(--gray-500)" id="chkDiscountRow" style="display:none"><span style="color:var(--green)">Discount</span><span id="chkDiscount" style="color:var(--green)">—</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:.9rem;color:var(--gray-500)"><span>Tax</span><span id="chkTax">—</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:.9rem;color:var(--gray-500)"><span>Delivery</span><span id="chkDelivery">—</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:1.1rem;font-weight:700;padding-top:12px;border-top:1px solid var(--gray-100)"><span>Total</span><span id="chkTotal">—</span></div>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;font-size:1rem">
+                🚀 Place Order
+              </button>
+              <p style="font-size:.75rem;color:var(--gray-300);text-align:center;margin-top:12px">
+                🔒 Your order is secure and encrypted
+              </p>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+  </div>
+
+  <footer class="footer"><div class="container"><div class="footer-bottom"><span>© 2025 MFC Food Shop</span></div></div></footer>
+
+  <div id="cartOverlay" class="cart-overlay"></div>
+  <div id="cartSidebar" class="cart-sidebar">
+    <div class="cart-header"><h3>🛒 Cart</h3><button id="cartClose" class="cart-close">✕</button></div>
+    <div id="cartItems" class="cart-items"></div>
+    <div id="cartFooter" class="cart-footer" style="display:none">
+      <div id="cartTotals" class="cart-totals"></div>
+      <a href="/checkout" class="btn btn-primary" style="width:100%;justify-content:center">Checkout →</a>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script src="/js/checkout.js"></script>
+</body>
+</html>

@@ -194,9 +194,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalOverlay = document.getElementById('productModal');
   if (modalOverlay) modalOverlay.addEventListener('click', e => { if (e.target === modalOverlay) closeModal(); });
 
-  // Card click opens modal
+  // Card click opens modal — only block on the Add and Fav buttons themselves
   document.getElementById('menuGrid')?.addEventListener('click', e => {
     const card = e.target.closest('.food-card');
-    if (card && !e.target.closest('button')) openProductModal(card.dataset.id);
+    if (!card) return;
+    const blocked = e.target.closest('.add-to-cart-btn') || e.target.closest('.food-fav-btn');
+    if (!blocked) openProductModal(card.dataset.id);
   });
 });

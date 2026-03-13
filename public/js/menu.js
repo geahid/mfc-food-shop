@@ -119,44 +119,52 @@ function openProductModal(id) {
   const modal = document.getElementById('productModal');
   if (!modal) return;
 
+  const stars = '★'.repeat(Math.floor(p.rating)) + '☆'.repeat(5 - Math.floor(p.rating));
   document.getElementById('modalContent').innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start">
-      <div>
-        <img src="${p.image}" alt="${p.name}" style="width:100%;border-radius:12px;aspect-ratio:4/3;object-fit:cover" onerror="this.src='https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400&fit=crop'">
+    <div class="modal-product-grid">
+      <div class="modal-img-wrap">
+        <img src="${p.image}" alt="${p.name}" class="modal-product-img"
+          onerror="this.src='https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400&fit=crop'">
       </div>
-      <div>
-        <span class="food-category" style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--red)">${p.category}</span>
-        <h2 style="margin:8px 0 12px;font-size:1.5rem">${p.name}</h2>
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
-          <span style="color:var(--gold);font-size:1rem">${'★'.repeat(Math.floor(p.rating))}</span>
+      <div class="modal-product-info">
+        <span class="modal-cat-label">${p.category}</span>
+        <h2 class="modal-product-name">${p.name}</h2>
+        <div class="modal-rating">
+          <span class="modal-stars">${stars}</span>
           <strong>${p.rating}</strong>
-          <span style="color:var(--gray-300);font-size:.875rem">(${p.reviews} reviews)</span>
+          <span class="modal-review-count">(${p.reviews} reviews)</span>
         </div>
-        <p style="color:var(--gray-500);font-size:.9rem;line-height:1.7;margin-bottom:20px">${p.description}</p>
-        <div style="display:flex;gap:20px;margin-bottom:20px;font-size:.85rem;color:var(--gray-500)">
+        <p class="modal-desc">${p.description}</p>
+        <div class="modal-meta">
           <span>⏱ ${p.prepTime || '15 min'}</span>
           <span>🔥 ${p.calories || 'N/A'} cal</span>
         </div>
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
-          <span style="font-size:2rem;font-weight:800;font-family:'Playfair Display',serif">${formatPrice(p.price)}</span>
-          ${p.originalPrice ? `<span style="font-size:1rem;color:var(--gray-300);text-decoration:line-through">${formatPrice(p.originalPrice)}</span>` : ''}
+        <div class="modal-price-row">
+          <span class="modal-price">${formatPrice(p.price)}</span>
+          ${p.originalPrice ? '<span class="modal-orig-price">' + formatPrice(p.originalPrice) + '</span>' : ''}
         </div>
-        <div style="display:flex;align-items:center;gap:12px">
-          <div style="display:flex;align-items:center;border:1.5px solid var(--gray-100);border-radius:8px;overflow:hidden">
-            <button onclick="this.nextSibling.value=Math.max(1,+this.nextSibling.value-1)" style="width:38px;height:44px;font-size:1.2rem;background:var(--gray-50);border:none;cursor:pointer">−</button>
-            <input type="number" value="1" min="1" max="20" id="modalQty" style="width:50px;height:44px;text-align:center;border:none;border-left:1px solid var(--gray-100);border-right:1px solid var(--gray-100);font-size:.95rem;font-weight:600;outline:none">
-            <button onclick="this.previousSibling.value=Math.min(20,+this.previousSibling.value+1)" style="width:38px;height:44px;font-size:1.2rem;background:var(--gray-50);border:none;cursor:pointer">+</button>
+        <div class="modal-actions">
+          <div class="qty-control">
+            <button class="qty-btn" id="qtyMinus" type="button">−</button>
+            <span class="qty-display" id="qtyDisplay">1</span>
+            <button class="qty-btn" id="qtyPlus" type="button">+</button>
           </div>
-          <button class="btn btn-primary" style="flex:1" onclick="addToCartModal('${p.id}')">Add to Cart</button>
+          <button class="btn btn-primary modal-add-btn" onclick="addToCartModal('${p.id}')">Add to Cart</button>
         </div>
       </div>
     </div>
   `;
+  // Wire up qty buttons with JS — no sibling traversal
+  let _qty = 1;
+  const display = document.getElementById('qtyDisplay');
+  document.getElementById('qtyMinus').onclick = () => { if (_qty > 1) { _qty--; display.textContent = _qty; } };
+  document.getElementById('qtyPlus').onclick  = () => { if (_qty < 20) { _qty++; display.textContent = _qty; } };
+  window._modalQty = () => _qty;
   modal.classList.add('open');
 }
 
 function addToCartModal(id) {
-  const qty = parseInt(document.getElementById('modalQty')?.value || 1);
+  const qty = window._modalQty ? window._modalQty() : 1;
   const product = allProducts.find(p => p.id === id);
   if (product) Cart.add(product, qty);
   closeModal();

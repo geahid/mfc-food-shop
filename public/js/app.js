@@ -240,3 +240,65 @@ document.addEventListener('DOMContentLoaded', () => {
   initNavbar();
   initCartSidebar();
 });
+
+/* ===== 🔥 Firefly Engine ===== */
+(function initFireflies() {
+  const canvas = document.createElement('canvas');
+  canvas.id = 'fireflyCanvas';
+  document.body.prepend(canvas);
+  const ctx = canvas.getContext('2d');
+
+  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const COUNT = window.innerWidth < 600 ? 22 : 40;
+  const flies = Array.from({ length: COUNT }, () => ({
+    x: Math.random() * window.innerWidth,
+    y: Math.random() * window.innerHeight,
+    r: Math.random() * 2 + 1,
+    dx: (Math.random() - .5) * .6,
+    dy: (Math.random() - .5) * .6,
+    phase: Math.random() * Math.PI * 2,
+    speed: Math.random() * .02 + .008,
+    hue: Math.random() < .7 ? 20 : 45,   // orange or gold
+  }));
+
+  let frame = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    frame++;
+    flies.forEach(f => {
+      f.x += f.dx + Math.sin(frame * f.speed + f.phase) * .4;
+      f.y += f.dy + Math.cos(frame * f.speed * .7 + f.phase) * .35;
+
+      // Wrap around edges
+      if (f.x < -10) f.x = canvas.width + 10;
+      if (f.x > canvas.width + 10) f.x = -10;
+      if (f.y < -10) f.y = canvas.height + 10;
+      if (f.y > canvas.height + 10) f.y = -10;
+
+      const glow = (Math.sin(frame * f.speed * 2 + f.phase) + 1) / 2; // 0–1
+      const alpha = .15 + glow * .65;
+      const radius = f.r * (1 + glow * .8);
+
+      const grad = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, radius * 4);
+      grad.addColorStop(0,   `hsla(${f.hue}, 100%, 70%, ${alpha})`);
+      grad.addColorStop(.4,  `hsla(${f.hue}, 90%,  50%, ${alpha * .5})`);
+      grad.addColorStop(1,   `hsla(${f.hue}, 80%,  30%, 0)`);
+
+      ctx.beginPath();
+      ctx.arc(f.x, f.y, radius * 4, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // Bright core
+      ctx.beginPath();
+      ctx.arc(f.x, f.y, radius, 0, Math.PI * 2);
+      ctx.fillStyle = `hsla(${f.hue + 20}, 100%, 90%, ${alpha})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();

@@ -17,7 +17,7 @@ async function loadDashboard() {
     setText('statProducts', stats.totalProducts);
     setText('statOrders', stats.totalOrders);
     setText('statUsers', stats.totalUsers);
-    setText('statRevenue', '$' + Number(stats.totalRevenue).toFixed(2));
+    setText('statRevenue', '₱' + Number(stats.totalRevenue).toFixed(2));
     setText('statPending', stats.pendingOrders);
 
     // Recent orders

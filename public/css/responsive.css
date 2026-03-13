@@ -277,3 +277,67 @@
 input[type=number] { -moz-appearance: textfield; }
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+/* ===== Fix qty-btn conflict: scope large buttons to modal only ===== */
+/* Reset cart sidebar qty buttons to their original small size */
+.cart-item-qty .qty-btn {
+  width: 28px !important; height: 28px !important;
+  font-size: .85rem !important; border-radius: 50% !important;
+  background: var(--bg-elevated) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border) !important;
+  flex: unset !important;
+}
+.cart-item-qty .qty-btn:hover,
+.cart-item-qty .qty-btn:active {
+  background: var(--red) !important; color: white !important;
+}
+
+/* Scope large modal qty to modal-actions only */
+.modal-actions .qty-control { border: 1.5px solid var(--border); border-radius: 10px; background: var(--bg-elevated); }
+.modal-actions .qty-btn {
+  width: 44px !important; height: 48px !important;
+  font-size: 1.3rem !important; border-radius: 0 !important;
+  border: none !important; flex: 1;
+}
+
+/* ===== Categories strip — ensure dark bg + visible on mobile ===== */
+.categories-strip {
+  background: var(--bg-card) !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+.cat-pill {
+  background: var(--bg-elevated) !important;
+  border-color: var(--border) !important;
+  color: var(--text-secondary) !important;
+}
+.cat-pill:hover { border-color: var(--red) !important; color: var(--text-primary) !important; }
+.cat-pill.active {
+  background: var(--red) !important;
+  border-color: var(--red) !important;
+  color: white !important;
+}
+
+/* ===== Mobile navbar — make it more visible ===== */
+@media (max-width: 768px) {
+  .navbar {
+    background: rgba(10,10,10,.97) !important;
+    border-bottom: 1px solid rgba(232,34,10,.25) !important;
+    box-shadow: 0 2px 20px rgba(0,0,0,.6) !important;
+  }
+  .mobile-nav {
+    background: #0A0A0A !important;
+    border-bottom: 1px solid var(--border) !important;
+  }
+  .mobile-nav .nav-link {
+    color: var(--text-primary) !important;
+    font-size: 1rem !important;
+    padding: 16px 20px !important;
+    border-bottom: 1px solid var(--border) !important;
+    display: block;
+  }
+  .mobile-nav .nav-link.active {
+    color: var(--red) !important;
+    background: rgba(232,34,10,.06) !important;
+  }
+}

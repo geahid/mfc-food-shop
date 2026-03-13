@@ -4,10 +4,336 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MFC Food Shop — Premium Food Delivered Fast</title>
+
+  <!-- PWA Meta -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#E8220A">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="MFC Food">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="MFC Food">
+
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/responsive.css">
+
+  <style>
+    /* ═══════════════════════════════════════════
+       SPLASH SCREEN — fire themed, like the purple app
+       ═══════════════════════════════════════════ */
+    #splash {
+      position: fixed; inset: 0; z-index: 99999;
+      background: #0A0A0A;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 0;
+      transition: opacity .5s ease, transform .5s ease;
+    }
+    #splash.hide {
+      opacity: 0; transform: scale(1.06);
+      pointer-events: none;
+    }
+
+    /* Animated icon */
+    .splash-icon-wrap {
+      width: 120px; height: 120px;
+      border-radius: 28px;
+      background: linear-gradient(145deg, #FF4500, #E8220A, #8B0000);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 56px;
+      box-shadow:
+        0 0 0 0 rgba(232,34,10,.8),
+        0 20px 60px rgba(232,34,10,.6),
+        0 0 120px rgba(232,34,10,.2);
+      animation: splashPop .6s cubic-bezier(.175,.885,.32,1.275) .1s both,
+                 splashPulse 2s ease-in-out 1s infinite;
+      position: relative;
+      overflow: hidden;
+    }
+    .splash-icon-wrap::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,180,50,.3) 0%, transparent 60%);
+      border-radius: inherit;
+    }
+    @keyframes splashPop {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+    @keyframes splashPulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(232,34,10,.8), 0 20px 60px rgba(232,34,10,.6); }
+      50%      { box-shadow: 0 0 0 18px rgba(232,34,10,0), 0 20px 80px rgba(232,34,10,.8); }
+    }
+
+    .splash-name {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 2rem; font-weight: 700;
+      color: #fff; letter-spacing: -.02em;
+      margin-top: 22px;
+      animation: splashFadeUp .5s ease .5s both;
+    }
+    .splash-name span { color: #E8220A; }
+    .splash-tagline {
+      font-size: .78rem; font-weight: 600; letter-spacing: .15em;
+      text-transform: uppercase; color: rgba(255,255,255,.4);
+      margin-top: 6px;
+      animation: splashFadeUp .5s ease .65s both;
+    }
+    @keyframes splashFadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Ember particles */
+    .splash-embers {
+      position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+    }
+    .ember {
+      position: absolute; width: 4px; height: 4px; border-radius: 50%;
+      background: #FF6B00; opacity: 0;
+      animation: emberFloat var(--dur, 2s) ease-in var(--delay, 0s) infinite;
+    }
+    @keyframes emberFloat {
+      0%   { opacity: 0; transform: translateY(0) scale(1); }
+      20%  { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-180px) scale(0.2) translateX(var(--drift, 20px)); }
+    }
+
+    /* Loading dots */
+    .splash-dots {
+      display: flex; gap: 6px; margin-top: 32px;
+      animation: splashFadeUp .5s ease .8s both;
+    }
+    .splash-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(232,34,10,.6);
+      animation: dotBounce 1.2s ease-in-out infinite;
+    }
+    .splash-dot:nth-child(2) { animation-delay: .2s; }
+    .splash-dot:nth-child(3) { animation-delay: .4s; }
+    @keyframes dotBounce {
+      0%,80%,100% { transform: scale(.6); opacity: .4; }
+      40%          { transform: scale(1); opacity: 1; }
+    }
+
+    /* ═══════════════════════════════════════════
+       HERO — LEFT-ALIGNED, FIRE ANIMATED
+       ═══════════════════════════════════════════ */
+    .hero {
+      background: #0A0A0A;
+      min-height: 90vh;
+      display: flex; align-items: center;
+      position: relative; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1600&fit=crop') center/cover no-repeat;
+      opacity: .12;
+    }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(100deg, rgba(10,10,10,1) 0%, rgba(10,10,10,.85) 55%, rgba(10,10,10,.3) 100%);
+    }
+    /* Right side food image fade */
+    .hero-food-img {
+      position: absolute; right: -60px; top: 50%;
+      transform: translateY(-50%);
+      width: 55%; max-width: 700px;
+      opacity: 0;
+      animation: heroImgIn 1s ease .8s forwards;
+      mask-image: linear-gradient(to left, rgba(0,0,0,.8) 30%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,.8) 30%, transparent 100%);
+      pointer-events: none;
+    }
+    @keyframes heroImgIn {
+      from { opacity:0; transform: translateY(-50%) translateX(40px); }
+      to   { opacity:1; transform: translateY(-50%) translateX(0); }
+    }
+    .hero-food-img img { width:100%; height:100%; object-fit:cover; border-radius:24px; }
+
+    .hero-content {
+      position: relative; z-index: 2;
+      max-width: 580px;
+    }
+
+    /* Badge animated */
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(232,34,10,.15); border: 1px solid rgba(232,34,10,.4);
+      color: #FF6B4A; padding: 7px 18px; border-radius: 100px;
+      font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+      margin-bottom: 28px;
+      animation: badgeIn .6s cubic-bezier(.175,.885,.32,1.275) .3s both;
+    }
+    .hero-badge .fire { animation: flickerFire 1.5s ease-in-out infinite; display:inline-block; }
+    @keyframes badgeIn { from{opacity:0;transform:translateX(-20px);}to{opacity:1;transform:translateX(0);} }
+    @keyframes flickerFire { 0%,100%{transform:scaleY(1);}50%{transform:scaleY(1.2) scaleX(.9);} }
+
+    /* Headline */
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      font-weight: 800; line-height: 1.1;
+      color: #fff; margin-bottom: 22px;
+      animation: heroTextIn .7s ease .5s both;
+    }
+    .hero h1 .highlight {
+      color: transparent;
+      background: linear-gradient(90deg, #E8220A, #FF6B4A, #FF9500);
+      background-size: 200% auto;
+      -webkit-background-clip: text; background-clip: text;
+      animation: fireSweepText 3s linear infinite;
+    }
+    @keyframes heroTextIn { from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);} }
+    @keyframes fireSweepText { 0%{background-position:200%;}100%{background-position:-200%;} }
+
+    .hero p {
+      font-size: 1.05rem; color: rgba(255,255,255,.65);
+      line-height: 1.7; margin-bottom: 36px; max-width: 440px;
+      animation: heroTextIn .7s ease .65s both;
+    }
+
+    /* Action buttons */
+    .hero-actions {
+      display: flex; gap: 14px; flex-wrap: wrap;
+      animation: heroTextIn .7s ease .8s both;
+    }
+    .hero-btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--red); color: #fff;
+      padding: 15px 32px; border-radius: 12px;
+      font-size: 1rem; font-weight: 700; letter-spacing: .01em;
+      text-decoration: none;
+      position: relative; overflow: hidden;
+      box-shadow: 0 8px 32px rgba(232,34,10,.5);
+      transition: transform .2s, box-shadow .2s;
+      animation: btnPulse 2.5s ease-in-out 1.5s infinite;
+    }
+    .hero-btn-primary::after {
+      content:'';position:absolute;inset:0;
+      background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.18) 50%,transparent 70%);
+      transform:translateX(-100%);transition:transform .5s;
+    }
+    .hero-btn-primary:hover::after { transform:translateX(100%); }
+    .hero-btn-primary:hover { transform:translateY(-3px);box-shadow:0 14px 40px rgba(232,34,10,.7);animation:none; }
+    @keyframes btnPulse {
+      0%,100%{box-shadow:0 8px 32px rgba(232,34,10,.5);}
+      50%{box-shadow:0 8px 48px rgba(232,34,10,.8);}
+    }
+
+    .hero-btn-outline {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; color: #fff;
+      padding: 14px 30px; border-radius: 12px;
+      font-size: 1rem; font-weight: 600;
+      border: 2px solid rgba(255,255,255,.3);
+      text-decoration: none; transition: all .2s;
+      backdrop-filter: blur(4px);
+    }
+    .hero-btn-outline:hover { border-color:#fff;background:rgba(255,255,255,.08);transform:translateY(-2px); }
+
+    /* Stats row */
+    .hero-stats {
+      display: flex; gap: 36px;
+      margin-top: 56px; padding-top: 36px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      animation: heroTextIn .7s ease 1s both;
+    }
+    .hero-stat .value {
+      font-size: 1.9rem; font-weight: 800;
+      font-family: 'Playfair Display', serif; color: #fff;
+      background: linear-gradient(90deg, #fff 0%, #FF6B4A 50%, #fff 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: fireSweepText 4s linear infinite;
+    }
+    .hero-stat .label { font-size: .78rem; color: rgba(255,255,255,.45); letter-spacing:.04em; margin-top:3px; }
+
+    /* Floating embers in hero */
+    .hero-embers { position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:1; }
+    .hero-ember {
+      position:absolute; border-radius:50%;
+      background: radial-gradient(circle, #FF9500, #E8220A);
+      opacity:0; animation: emberRise var(--dur) ease-in var(--delay) infinite;
+    }
+    @keyframes emberRise {
+      0%   { opacity:0; transform:translateY(0) scale(1); }
+      15%  { opacity:.8; }
+      100% { opacity:0; transform:translateY(-300px) scale(.1) translateX(var(--drift)); }
+    }
+
+    /* ═══════════════════════════════════════════
+       SECTION ANIMATIONS — scroll reveal
+       ═══════════════════════════════════════════ */
+    .reveal {
+      opacity: 0; transform: translateY(30px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+    .reveal-delay-1 { transition-delay: .1s; }
+    .reveal-delay-2 { transition-delay: .2s; }
+    .reveal-delay-3 { transition-delay: .3s; }
+
+    /* Food card hover fire outline */
+    .food-card::after {
+      content:'';position:absolute;inset:0;border-radius:inherit;
+      box-shadow:0 0 0 0 rgba(232,34,10,0);
+      transition:box-shadow .3s;pointer-events:none;
+    }
+    .food-card:hover::after { box-shadow:0 0 0 2px rgba(232,34,10,.5); }
+    .food-card { position:relative; }
+
+    /* Add to cart btn fire sweep */
+    .add-to-cart-btn {
+      background: var(--red); color: #fff;
+      position:relative; overflow:hidden;
+    }
+    .add-to-cart-btn::before {
+      content:'';position:absolute;inset:0;
+      background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.2) 50%,transparent 70%);
+      transform:translateX(-200%);transition:transform .4s;
+    }
+    .add-to-cart-btn:hover::before { transform:translateX(200%); }
+    .add-to-cart-btn:active { transform:scale(.95); }
+
+    /* How it works cards fire hover */
+    .hiw-card {
+      text-align:center;padding:40px 24px;
+      background:var(--bg-card);border:1px solid var(--border);
+      border-radius:16px;transition:transform .25s,border-color .25s,box-shadow .25s;
+      position:relative;overflow:hidden;
+    }
+    .hiw-card::before {
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(circle at 50% 100%,rgba(232,34,10,.1),transparent 70%);
+      opacity:0;transition:opacity .3s;
+    }
+    .hiw-card:hover { transform:translateY(-6px);border-color:rgba(232,34,10,.4);box-shadow:0 12px 40px rgba(232,34,10,.15); }
+    .hiw-card:hover::before { opacity:1; }
+    .hiw-icon { font-size:3rem;margin-bottom:18px;display:block;animation:iconBob 3s ease-in-out infinite; }
+    .hiw-card:nth-child(2) .hiw-icon { animation-delay:.5s; }
+    .hiw-card:nth-child(3) .hiw-icon { animation-delay:1s; }
+    @keyframes iconBob { 0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);} }
+  </style>
 </head>
 <body>
+
+  <!-- ════════════════════════════════════
+       SPLASH SCREEN
+       ════════════════════════════════════ -->
+  <div id="splash">
+    <div class="splash-embers" id="splashEmbers"></div>
+    <div class="splash-icon-wrap">🍽</div>
+    <div class="splash-name">MFC <span>Food</span></div>
+    <div class="splash-tagline">Fresh • Fast • Flavorful</div>
+    <div class="splash-dots">
+      <div class="splash-dot"></div>
+      <div class="splash-dot"></div>
+      <div class="splash-dot"></div>
+    </div>
+  </div>
+
   <!-- Navbar -->
   <nav class="navbar">
     <div class="container navbar-inner">
@@ -43,18 +369,30 @@
   </div>
 
   <div class="page-content">
-    <!-- Hero -->
+
+    <!-- ════════ HERO ════════ -->
     <section class="hero">
       <div class="hero-bg"></div>
       <div class="hero-overlay"></div>
+
+      <!-- Floating embers -->
+      <div class="hero-embers" id="heroEmbers"></div>
+
+      <!-- Right food image -->
+      <div class="hero-food-img">
+        <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=900&fit=crop" alt="Food">
+      </div>
+
       <div class="container">
         <div class="hero-content">
-          <div class="hero-badge">🔥 Fresh • Fast • Flavorful</div>
-          <h1>Taste the <span>Difference</span> We Deliver</h1>
+          <div class="hero-badge">
+            <span class="fire">🔥</span> Fresh • Fast • Flavorful
+          </div>
+          <h1>Taste the <span class="highlight">Difference</span><br>We Deliver</h1>
           <p>Restaurant-quality food crafted by expert chefs, delivered straight to your door in under 30 minutes.</p>
           <div class="hero-actions">
-            <a href="/menu" class="btn btn-primary btn-lg">Explore Menu →</a>
-            <a href="/register" class="btn btn-outline-white btn-lg">Get $5 Off First Order</a>
+            <a href="/menu" class="hero-btn-primary">Explore Menu →</a>
+            <a href="/register" class="hero-btn-outline">₱50 Off First Order</a>
           </div>
           <div class="hero-stats">
             <div class="hero-stat"><div class="value">50+</div><div class="label">Menu Items</div></div>
@@ -66,22 +404,22 @@
       </div>
     </section>
 
-    <!-- Categories -->
+    <!-- ════════ CATEGORIES ════════ -->
     <section class="section-sm dark-section-alt">
       <div class="container">
-        <div class="section-header text-center">
+        <div class="section-header text-center reveal">
           <div class="section-label">Browse</div>
           <h2>Shop by Category</h2>
           <p>Find exactly what you're craving from our extensive menu</p>
         </div>
-        <div id="homeCats" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:14px;margin-top:8px"></div>
+        <div id="homeCats" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px;margin-top:8px"></div>
       </div>
     </section>
 
-    <!-- Featured Items -->
+    <!-- ════════ FEATURED ════════ -->
     <section class="section">
       <div class="container">
-        <div class="flex-between section-header">
+        <div class="flex-between section-header reveal">
           <div>
             <div class="section-label">Chef's Selection</div>
             <h2>Featured Dishes</h2>
@@ -94,60 +432,45 @@
       </div>
     </section>
 
-    <!-- Promos -->
+    <!-- ════════ PROMOS ════════ -->
     <section class="section-sm dark-section-alt">
       <div class="container">
-        <div class="promo-grid">
-          <div class="promo-card dark">
-            <div class="promo-card-pattern">🍔</div>
-            <span class="badge">Limited Time</span>
-            <h3>Weekend Burger Deal</h3>
-            <p>20% off all burgers every Friday to Sunday</p>
-            <a href="/menu" class="btn btn-outline-white btn-sm">Order Now →</a>
-          </div>
-          <div class="promo-card red">
-            <div class="promo-card-pattern">🎉</div>
-            <span class="badge">New Customers</span>
-            <h3>First Order Discount</h3>
-            <p>Use code WELCOME5 and save $5 on your first order</p>
-            <a href="/register" class="btn btn-outline-white btn-sm">Claim Offer →</a>
-          </div>
-        </div>
+        <div class="promo-grid" id="promoGrid"></div>
       </div>
     </section>
 
-    <!-- How It Works -->
+    <!-- ════════ HOW IT WORKS ════════ -->
     <section class="section">
       <div class="container">
-        <div class="section-header text-center">
+        <div class="section-header text-center reveal">
           <div class="section-label">Simple Process</div>
           <h2>How It Works</h2>
           <p>From menu to your doorstep in three simple steps</p>
         </div>
-        <div class="grid-3" style="margin-top:8px">
-          <div style="text-align:center;padding:32px 20px">
-            <div style="font-size:3rem;margin-bottom:16px">🍽️</div>
-            <h3 style="margin-bottom:10px">Browse Menu</h3>
-            <p style="color:var(--gray-500);font-size:.9rem">Explore our extensive menu of fresh, chef-crafted dishes across all categories</p>
+        <div class="grid-3" style="margin-top:8px;gap:20px">
+          <div class="hiw-card reveal reveal-delay-1">
+            <span class="hiw-icon">🍽️</span>
+            <h3 style="margin-bottom:10px;color:var(--text-primary)">Browse Menu</h3>
+            <p style="color:var(--text-secondary);font-size:.9rem;line-height:1.6">Explore our extensive menu of fresh, chef-crafted dishes across all categories</p>
           </div>
-          <div style="text-align:center;padding:32px 20px">
-            <div style="font-size:3rem;margin-bottom:16px">🛒</div>
-            <h3 style="margin-bottom:10px">Add to Cart</h3>
-            <p style="color:var(--gray-500);font-size:.9rem">Select your favorites, customize quantities and complete checkout in seconds</p>
+          <div class="hiw-card reveal reveal-delay-2">
+            <span class="hiw-icon">🛒</span>
+            <h3 style="margin-bottom:10px;color:var(--text-primary)">Add to Cart</h3>
+            <p style="color:var(--text-secondary);font-size:.9rem;line-height:1.6">Select your favorites, customize quantities and complete checkout in seconds</p>
           </div>
-          <div style="text-align:center;padding:32px 20px">
-            <div style="font-size:3rem;margin-bottom:16px">🚀</div>
-            <h3 style="margin-bottom:10px">Fast Delivery</h3>
-            <p style="color:var(--gray-500);font-size:.9rem">Your order arrives hot, fresh and on time. Track it every step of the way</p>
+          <div class="hiw-card reveal reveal-delay-3">
+            <span class="hiw-icon">🚀</span>
+            <h3 style="margin-bottom:10px;color:var(--text-primary)">Fast Delivery</h3>
+            <p style="color:var(--text-secondary);font-size:.9rem;line-height:1.6">Your order arrives hot, fresh and on time. Track it every step of the way</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Popular Items -->
+    <!-- ════════ POPULAR ════════ -->
     <section class="section dark-section-alt">
       <div class="container">
-        <div class="flex-between section-header">
+        <div class="flex-between section-header reveal">
           <div>
             <div class="section-label">Trending Now</div>
             <h2>Most Popular</h2>
@@ -158,14 +481,14 @@
       </div>
     </section>
 
-    <!-- CTA Banner -->
+    <!-- ════════ CTA BANNER ════════ -->
     <section class="cta-section">
       <div class="container text-center">
-        <h2 style="color:white;margin-bottom:16px">Ready to Order Something Amazing?</h2>
-        <p style="color:rgba(255,255,255,.6);margin-bottom:32px;font-size:1.05rem">Join thousands of satisfied customers who trust MFC for their daily meals</p>
-        <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
-          <a href="/menu" class="btn btn-primary btn-lg">Order Now 🚀</a>
-          <a href="/register" class="btn btn-outline-white btn-lg">Create Account</a>
+        <h2 style="color:white;margin-bottom:16px" class="reveal">Ready to Order Something Amazing?</h2>
+        <p style="color:rgba(255,255,255,.6);margin-bottom:32px;font-size:1.05rem" class="reveal reveal-delay-1">Join thousands of satisfied customers who trust MFC for their daily meals</p>
+        <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap" class="reveal reveal-delay-2">
+          <a href="/menu" class="hero-btn-primary">Order Now 🚀</a>
+          <a href="/register" class="hero-btn-outline">Create Account</a>
         </div>
       </div>
     </section>
@@ -207,14 +530,14 @@
           </div>
         </div>
         <div class="footer-col">
-          <h4>Newsletter</h4>
-          <p style="font-size:.875rem;margin-bottom:12px">Get exclusive deals and new menu updates</p>
+          <h4>Contact Us</h4>
+          <p style="font-size:.875rem;margin-bottom:12px;color:rgba(255,255,255,.5)">Get exclusive deals and new menu updates</p>
           <div class="footer-newsletter">
             <input type="email" placeholder="Your email">
             <button>Subscribe</button>
           </div>
-          <p style="font-size:.78rem;color:rgba(255,255,255,.3);margin-top:10px">📍 123 Food Street, Gourmet City</p>
-          <p style="font-size:.78rem;color:rgba(255,255,255,.3);margin-top:4px">📞 +1 (555) 000-FOOD</p>
+          <p style="font-size:.78rem;color:rgba(255,255,255,.3);margin-top:10px">📍 123 Food Street, Davao City</p>
+          <p style="font-size:.78rem;color:rgba(255,255,255,.3);margin-top:4px">📞 +63 (82) 000-FOOD</p>
         </div>
       </div>
       <div class="footer-bottom">
@@ -224,7 +547,7 @@
     </div>
   </footer>
 
-  <!-- Cart Overlay & Sidebar -->
+  <!-- Cart -->
   <div id="cartOverlay" class="cart-overlay"></div>
   <div id="cartSidebar" class="cart-sidebar">
     <div class="cart-header">
@@ -239,106 +562,107 @@
     </div>
   </div>
 
-  <!-- Product Detail Modal -->
-  <div id="productModal" class="modal-overlay">
-    <div class="modal">
-      <div class="modal-header">
-        <h3>Item Details</h3>
-        <button onclick="closeHomeModal()" class="modal-close-btn">✕</button>
-      </div>
-      <div class="modal-body" id="modalContent"></div>
-    </div>
-  </div>
-
   <script src="/js/app.js"></script>
   <script>
-    // Safe add to cart — avoids quote escaping issues in template literals
-    function addToCartHome(id) {
-      const p = window._homeProducts && window._homeProducts.find(x => x.id === id);
-      if (p) Cart.add({ id: p.id, name: p.name, price: p.price, image: p.image, category: p.category });
-    }
+    /* ════════════════════════════════════
+       SPLASH — dismiss after 2.2s
+       ════════════════════════════════════ */
+    (function() {
+      const splash = document.getElementById('splash');
+      const embers = document.getElementById('splashEmbers');
 
-    function closeHomeModal() {
-      document.getElementById('productModal')?.classList.remove('open');
-    }
+      // Create embers
+      for (let i = 0; i < 18; i++) {
+        const e = document.createElement('div');
+        e.className = 'ember';
+        const size = 2 + Math.random() * 5;
+        e.style.cssText = `
+          width:${size}px;height:${size}px;
+          left:${30 + Math.random()*40}%;
+          bottom:${20 + Math.random()*15}%;
+          --dur:${1.5 + Math.random()*2}s;
+          --delay:${Math.random()*2}s;
+          --drift:${(Math.random()-0.5)*80}px;
+          background:hsl(${20+Math.random()*30},100%,${50+Math.random()*20}%);
+        `;
+        embers.appendChild(e);
+      }
 
-    function openHomeProductModal(id) {
-      const p = window._homeProducts && window._homeProducts.find(x => x.id === id);
-      if (!p) return;
-      const stars = '★'.repeat(Math.floor(p.rating)) + '☆'.repeat(5 - Math.floor(p.rating));
-      document.getElementById('modalContent').innerHTML = `
-        <div class="modal-product-grid">
-          <div class="modal-img-wrap">
-            <img src="${p.image}" alt="${p.name}" class="modal-product-img"
-              onerror="this.src='https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400&fit=crop'">
-          </div>
-          <div class="modal-product-info">
-            <span class="modal-cat-label">${p.category}</span>
-            <h2 class="modal-product-name">${p.name}</h2>
-            <div class="modal-rating">
-              <span class="modal-stars">${stars}</span>
-              <strong>${p.rating}</strong>
-              <span class="modal-review-count">(${p.reviews || 0} reviews)</span>
-            </div>
-            <p class="modal-desc">${p.description}</p>
-            <div class="modal-meta">
-              <span>⏱ ${p.prepTime || '15 min'}</span>
-              <span>🔥 ${p.calories || 'N/A'} cal</span>
-            </div>
-            <div class="modal-price-row">
-              <span class="modal-price">$${p.price.toFixed(2)}</span>
-              ${p.originalPrice ? '<span class="modal-orig-price">$' + p.originalPrice.toFixed(2) + '</span>' : ''}
-            </div>
-            <div class="modal-actions">
-              <div class="qty-control">
-                <button class="qty-btn" id="homeQtyMinus" type="button">−</button>
-                <span class="qty-display" id="homeQtyDisplay">1</span>
-                <button class="qty-btn" id="homeQtyPlus" type="button">+</button>
-              </div>
-              <button class="btn btn-primary modal-add-btn" id="homeModalAddBtn">Add to Cart</button>
-            </div>
-          </div>
-        </div>
-      `;
-      // Wire qty buttons
-      let _qty = 1;
-      const display = document.getElementById('homeQtyDisplay');
-      document.getElementById('homeQtyMinus').onclick = () => { if (_qty > 1) { _qty--; display.textContent = _qty; } };
-      document.getElementById('homeQtyPlus').onclick  = () => { if (_qty < 20) { _qty++; display.textContent = _qty; } };
-      document.getElementById('homeModalAddBtn').onclick = () => {
-        const product = window._homeProducts.find(x => x.id === id);
-        if (product) Cart.add(product, _qty);
-        closeHomeModal();
-      };
-      document.getElementById('productModal').classList.add('open');
-    }
+      // Already visited? skip splash
+      if (sessionStorage.getItem('mfc_splash_done')) {
+        splash.style.display = 'none';
+        return;
+      }
 
-    function makeFoodCard(p, showBadge) {
-      const badge = showBadge && p.tags && p.tags.includes('bestseller')
-        ? '<span class="food-badge badge-popular">Popular</span>' : '';
-      const origPrice = p.originalPrice
-        ? '<span class="original">$' + p.originalPrice.toFixed(2) + '</span>' : '';
+      setTimeout(() => {
+        splash.classList.add('hide');
+        setTimeout(() => {
+          splash.style.display = 'none';
+          sessionStorage.setItem('mfc_splash_done', '1');
+        }, 500);
+      }, 2200);
+    })();
+
+    /* ════════════════════════════════════
+       HERO EMBERS
+       ════════════════════════════════════ */
+    (function() {
+      const container = document.getElementById('heroEmbers');
+      for (let i = 0; i < 22; i++) {
+        const e = document.createElement('div');
+        e.className = 'hero-ember';
+        const size = 2 + Math.random() * 6;
+        e.style.cssText = `
+          width:${size}px;height:${size}px;
+          left:${Math.random()*100}%;
+          bottom:${Math.random()*30}%;
+          --dur:${2 + Math.random()*4}s;
+          --delay:${Math.random()*4}s;
+          --drift:${(Math.random()-0.5)*60}px;
+        `;
+        container.appendChild(e);
+      }
+    })();
+
+    /* ════════════════════════════════════
+       SCROLL REVEAL
+       ════════════════════════════════════ */
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    /* ════════════════════════════════════
+       PAGE DATA
+       ════════════════════════════════════ */
+    function makeFoodCard(p, showOrig) {
+      const pid = p.id;
+      const pname = p.name.replace(/'/g, '&#39;');
+      const orig = p.originalPrice ? `<span class="original">₱${p.originalPrice}</span>` : '';
+      const badge = p.tags?.includes('bestseller') ? '<span class="food-badge badge-popular">Popular</span>' : '';
+      const rating = showOrig
+        ? `<span class="food-rating"><span class="star">★</span> ${p.rating} <span class="count">(${p.reviews})</span></span>`
+        : `<span class="food-rating"><span class="star">★</span> ${p.rating}</span>`;
       return `
-        <div class="food-card" data-pid="${p.id}">
+        <div class="food-card" onclick="openFoodModal('${pid}')">
           <div class="food-card-img">
-            <img src="${p.image}" alt="${p.name}" loading="lazy"
-              onerror="this.src='https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400&fit=crop'">
+            <img src="${p.image}" alt="${pname}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400&fit=crop'">
             ${badge}
+            <button class="food-fav-btn" onclick="event.stopPropagation()" title="Favourite">♡</button>
           </div>
           <div class="food-card-body">
             <div class="food-meta">
               <span class="food-category">${p.category}</span>
-              <span class="food-rating"><span class="star">★</span> ${p.rating}
-                ${p.reviews ? '<span class="count">(' + p.reviews + ')</span>' : ''}
-              </span>
+              ${rating}
             </div>
             <div class="food-card-name">${p.name}</div>
             <div class="food-card-desc">${p.description}</div>
             <div class="food-card-footer">
               <div class="food-price">
-                <span class="current">$${p.price.toFixed(2)}</span>${origPrice}
+                <span class="current">₱${p.price}</span>
+                ${orig}
               </div>
-              <button class="add-to-cart-btn" data-pid="${p.id}">
+              <button class="add-to-cart-btn" onclick="event.stopPropagation();addToCartHome('${pid}','${pname}',${p.price},'${p.image}','${p.category}')">
                 <span class="plus">+</span> Add
               </button>
             </div>
@@ -347,52 +671,46 @@
     }
 
     document.addEventListener('DOMContentLoaded', async () => {
-      // Load categories
+      // Categories
       try {
         const cats = await API.get('/api/categories');
-        const catContainer = document.getElementById('homeCats');
-        catContainer.innerHTML = cats.filter(c => c.id !== 'all').slice(0,12).map(c => `
+        document.getElementById('homeCats').innerHTML = cats.filter(c => c.id !== 'all').slice(0,12).map(c => `
           <a href="/menu?cat=${c.id}" class="cat-home-card">
             <span style="font-size:2rem">${c.icon}</span>
-            <span style="font-size:.8rem;font-weight:600">${c.name}</span>
-          </a>
-        `).join('');
+            <span style="font-size:.78rem;font-weight:600">${c.name}</span>
+          </a>`).join('');
       } catch {}
 
       // Featured
       try {
         const featured = await API.get('/api/products?featured=true');
-        window._homeProducts = window._homeProducts || [];
-        featured.forEach(p => { if (!window._homeProducts.find(x => x.id === p.id)) window._homeProducts.push(p); });
-        const grid = document.getElementById('featuredGrid');
-        grid.innerHTML = featured.slice(0,8).map(p => makeFoodCard(p, true)).join('');
+        document.getElementById('featuredGrid').innerHTML = featured.slice(0,8).map(p => makeFoodCard(p, false)).join('');
       } catch {}
 
       // Popular
       try {
         const popular = await API.get('/api/products?sort=rating');
-        window._homeProducts = window._homeProducts || [];
-        popular.forEach(p => { if (!window._homeProducts.find(x => x.id === p.id)) window._homeProducts.push(p); });
-        const grid = document.getElementById('popularGrid');
-        grid.innerHTML = popular.slice(0,4).map(p => makeFoodCard(p, false)).join('');
+        document.getElementById('popularGrid').innerHTML = popular.slice(0,6).map(p => makeFoodCard(p, true)).join('');
       } catch {}
-
-      // Delegate add-to-cart clicks
-      document.addEventListener('click', e => {
-        const btn = e.target.closest('.add-to-cart-btn[data-pid]');
-        if (btn) { e.stopPropagation(); addToCartHome(btn.dataset.pid); return; }
-
-        // Card click → open modal (not on Add button)
-        const card = e.target.closest('.food-card[data-pid]');
-        if (card && !e.target.closest('.add-to-cart-btn')) {
-          openHomeProductModal(card.dataset.pid);
-          return;
-        }
-
-        // Click outside modal closes it
-        if (e.target.id === 'productModal') closeHomeModal();
-      });
     });
+
+    function addToCartHome(id, name, price, image, category) {
+      Cart.add({ id, name, price, image, category });
+    }
+
+    function openFoodModal(id) {
+      // Trigger menu modal if available, else add to cart
+      if (typeof openProductModal === 'function') {
+        openProductModal(id);
+      }
+    }
+
+    /* ════════════════════════════════════
+       PWA Install — register service worker
+       ════════════════════════════════════ */
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
   </script>
 </body>
 </html>

@@ -239,12 +239,78 @@
     </div>
   </div>
 
+  <!-- Product Detail Modal -->
+  <div id="productModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Item Details</h3>
+        <button onclick="closeHomeModal()" class="modal-close-btn">✕</button>
+      </div>
+      <div class="modal-body" id="modalContent"></div>
+    </div>
+  </div>
+
   <script src="/js/app.js"></script>
   <script>
     // Safe add to cart — avoids quote escaping issues in template literals
     function addToCartHome(id) {
       const p = window._homeProducts && window._homeProducts.find(x => x.id === id);
       if (p) Cart.add({ id: p.id, name: p.name, price: p.price, image: p.image, category: p.category });
+    }
+
+    function closeHomeModal() {
+      document.getElementById('productModal')?.classList.remove('open');
+    }
+
+    function openHomeProductModal(id) {
+      const p = window._homeProducts && window._homeProducts.find(x => x.id === id);
+      if (!p) return;
+      const stars = '★'.repeat(Math.floor(p.rating)) + '☆'.repeat(5 - Math.floor(p.rating));
+      document.getElementById('modalContent').innerHTML = `
+        <div class="modal-product-grid">
+          <div class="modal-img-wrap">
+            <img src="${p.image}" alt="${p.name}" class="modal-product-img"
+              onerror="this.src='https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400&fit=crop'">
+          </div>
+          <div class="modal-product-info">
+            <span class="modal-cat-label">${p.category}</span>
+            <h2 class="modal-product-name">${p.name}</h2>
+            <div class="modal-rating">
+              <span class="modal-stars">${stars}</span>
+              <strong>${p.rating}</strong>
+              <span class="modal-review-count">(${p.reviews || 0} reviews)</span>
+            </div>
+            <p class="modal-desc">${p.description}</p>
+            <div class="modal-meta">
+              <span>⏱ ${p.prepTime || '15 min'}</span>
+              <span>🔥 ${p.calories || 'N/A'} cal</span>
+            </div>
+            <div class="modal-price-row">
+              <span class="modal-price">$${p.price.toFixed(2)}</span>
+              ${p.originalPrice ? '<span class="modal-orig-price">$' + p.originalPrice.toFixed(2) + '</span>' : ''}
+            </div>
+            <div class="modal-actions">
+              <div class="qty-control">
+                <button class="qty-btn" id="homeQtyMinus" type="button">−</button>
+                <span class="qty-display" id="homeQtyDisplay">1</span>
+                <button class="qty-btn" id="homeQtyPlus" type="button">+</button>
+              </div>
+              <button class="btn btn-primary modal-add-btn" id="homeModalAddBtn">Add to Cart</button>
+            </div>
+          </div>
+        </div>
+      `;
+      // Wire qty buttons
+      let _qty = 1;
+      const display = document.getElementById('homeQtyDisplay');
+      document.getElementById('homeQtyMinus').onclick = () => { if (_qty > 1) { _qty--; display.textContent = _qty; } };
+      document.getElementById('homeQtyPlus').onclick  = () => { if (_qty < 20) { _qty++; display.textContent = _qty; } };
+      document.getElementById('homeModalAddBtn').onclick = () => {
+        const product = window._homeProducts.find(x => x.id === id);
+        if (product) Cart.add(product, _qty);
+        closeHomeModal();
+      };
+      document.getElementById('productModal').classList.add('open');
     }
 
     function makeFoodCard(p, showBadge) {
@@ -314,7 +380,17 @@
       // Delegate add-to-cart clicks
       document.addEventListener('click', e => {
         const btn = e.target.closest('.add-to-cart-btn[data-pid]');
-        if (btn) { e.stopPropagation(); addToCartHome(btn.dataset.pid); }
+        if (btn) { e.stopPropagation(); addToCartHome(btn.dataset.pid); return; }
+
+        // Card click → open modal (not on Add button)
+        const card = e.target.closest('.food-card[data-pid]');
+        if (card && !e.target.closest('.add-to-cart-btn')) {
+          openHomeProductModal(card.dataset.pid);
+          return;
+        }
+
+        // Click outside modal closes it
+        if (e.target.id === 'productModal') closeHomeModal();
       });
     });
   </script>

@@ -372,3 +372,158 @@ tbody tr:hover td { background: var(--bg-elevated); }
 
 /* ===== Favorites ===== */
 .favorites-empty { text-align: center; padding: 60px 20px; }
+
+/* ===== Dark Section Alternates ===== */
+.dark-section-alt { background: var(--bg-card); }
+.cta-section { background: #0A0A0A; padding: 72px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
+.cta-section h2 { color: white; margin-bottom: 16px; }
+.cta-section p { color: rgba(255,255,255,.55); margin-bottom: 32px; font-size: 1.05rem; }
+.cta-section > div > div { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+/* ===== Category Home Cards ===== */
+.cat-home-card {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 20px 12px; background: var(--bg-card); border-radius: 12px;
+  border: 1px solid var(--border); transition: var(--transition);
+  text-decoration: none; color: var(--text-primary);
+}
+.cat-home-card:hover { color: var(--text-primary); background: var(--bg-elevated); }
+
+/* ===== 🔥 Fire Animations ===== */
+
+/* Ember particles floating up */
+@keyframes emberFloat {
+  0%   { transform: translateY(0) translateX(0) scale(1); opacity: 1; }
+  50%  { transform: translateY(-60px) translateX(12px) scale(.7); opacity: .7; }
+  100% { transform: translateY(-120px) translateX(-8px) scale(.3); opacity: 0; }
+}
+
+/* Flame flicker */
+@keyframes flicker {
+  0%, 100% { transform: scaleY(1) scaleX(1); }
+  25%       { transform: scaleY(1.04) scaleX(.97); }
+  50%       { transform: scaleY(.97) scaleX(1.02); }
+  75%       { transform: scaleY(1.02) scaleX(.98); }
+}
+
+/* Glow pulse */
+@keyframes firePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(232,34,10,0), 0 6px 20px rgba(232,34,10,.35); }
+  50%       { box-shadow: 0 0 28px 8px rgba(232,34,10,.25), 0 6px 20px rgba(232,34,10,.5); }
+}
+
+/* Heat shimmer on section label */
+@keyframes heatShimmer {
+  0%, 100% { letter-spacing: .1em; }
+  50%       { letter-spacing: .12em; }
+}
+
+/* ===== Apply fire effects ===== */
+
+/* Primary buttons pulse like embers */
+.btn-primary {
+  animation: firePulse 3s ease-in-out infinite;
+}
+.btn-primary:hover {
+  animation: none;
+  background: var(--red-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(232,34,10,.55);
+}
+
+/* Add-to-cart button flickers on hover */
+.add-to-cart-btn:hover {
+  animation: flicker .25s ease-in-out 3;
+}
+
+/* Hero badge ember glow */
+.hero-badge {
+  animation: firePulse 2.5s ease-in-out infinite;
+}
+
+/* Section labels shimmer like heat */
+.section-label {
+  animation: heatShimmer 3s ease-in-out infinite;
+}
+
+/* Fire ember particles on hero */
+.hero::after {
+  content: '🔥';
+  position: absolute;
+  bottom: 40px;
+  left: 8%;
+  font-size: 1.2rem;
+  opacity: 0;
+  animation: emberFloat 4s ease-in infinite;
+  pointer-events: none;
+}
+.hero::before {
+  content: '✦';
+  position: absolute;
+  bottom: 60px;
+  left: 20%;
+  font-size: 0.6rem;
+  color: var(--red-light);
+  opacity: 0;
+  animation: emberFloat 3s ease-in 1.2s infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Food card hover fire border */
+.food-card:hover {
+  border-color: rgba(232,34,10,.4);
+  box-shadow: 0 8px 32px rgba(0,0,0,.6), 0 0 0 1px rgba(232,34,10,.2);
+}
+
+/* Logo icon fire flicker */
+.logo-icon {
+  animation: flicker 4s ease-in-out infinite;
+}
+
+/* CTA section ember particles */
+.cta-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 100%, rgba(232,34,10,.12) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+/* Nav active glow */
+.nav-link.active {
+  color: var(--text-primary);
+  background: var(--bg-elevated);
+  box-shadow: inset 0 0 0 1px rgba(232,34,10,.15);
+}
+
+/* Cart badge fire pulse */
+.cart-badge {
+  animation: firePulse 2s ease-in-out infinite;
+}
+
+/* Stat card value shimmer in admin */
+.stat-value {
+  background: linear-gradient(90deg, var(--text-primary) 0%, #FF6B4A 50%, var(--text-primary) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmerText 4s linear infinite;
+}
+@keyframes shimmerText {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+/* Spinner becomes fire red (already set) — ensure */
+.spinner { border-top-color: var(--red); }
+
+/* Page load fade in */
+.page-content {
+  animation: pageIn .4s ease both;
+}
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

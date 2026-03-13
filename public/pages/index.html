@@ -67,7 +67,7 @@
     </section>
 
     <!-- Categories -->
-    <section class="section-sm" style="background:var(--gray-50)">
+    <section class="section-sm dark-section-alt">
       <div class="container">
         <div class="section-header text-center">
           <div class="section-label">Browse</div>
@@ -95,7 +95,7 @@
     </section>
 
     <!-- Promos -->
-    <section class="section-sm" style="background:var(--gray-50)">
+    <section class="section-sm dark-section-alt">
       <div class="container">
         <div class="promo-grid">
           <div class="promo-card dark">
@@ -145,7 +145,7 @@
     </section>
 
     <!-- Popular Items -->
-    <section class="section" style="background:var(--gray-50)">
+    <section class="section dark-section-alt">
       <div class="container">
         <div class="flex-between section-header">
           <div>
@@ -159,7 +159,7 @@
     </section>
 
     <!-- CTA Banner -->
-    <section style="background:var(--charcoal);padding:72px 0">
+    <section class="cta-section">
       <div class="container text-center">
         <h2 style="color:white;margin-bottom:16px">Ready to Order Something Amazing?</h2>
         <p style="color:rgba(255,255,255,.6);margin-bottom:32px;font-size:1.05rem">Join thousands of satisfied customers who trust MFC for their daily meals</p>
@@ -241,13 +241,52 @@
 
   <script src="/js/app.js"></script>
   <script>
+    // Safe add to cart — avoids quote escaping issues in template literals
+    function addToCartHome(id) {
+      const p = window._homeProducts && window._homeProducts.find(x => x.id === id);
+      if (p) Cart.add({ id: p.id, name: p.name, price: p.price, image: p.image, category: p.category });
+    }
+
+    function makeFoodCard(p, showBadge) {
+      const badge = showBadge && p.tags && p.tags.includes('bestseller')
+        ? '<span class="food-badge badge-popular">Popular</span>' : '';
+      const origPrice = p.originalPrice
+        ? '<span class="original">$' + p.originalPrice.toFixed(2) + '</span>' : '';
+      return `
+        <div class="food-card" data-pid="${p.id}">
+          <div class="food-card-img">
+            <img src="${p.image}" alt="${p.name}" loading="lazy"
+              onerror="this.src='https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400&fit=crop'">
+            ${badge}
+          </div>
+          <div class="food-card-body">
+            <div class="food-meta">
+              <span class="food-category">${p.category}</span>
+              <span class="food-rating"><span class="star">★</span> ${p.rating}
+                ${p.reviews ? '<span class="count">(' + p.reviews + ')</span>' : ''}
+              </span>
+            </div>
+            <div class="food-card-name">${p.name}</div>
+            <div class="food-card-desc">${p.description}</div>
+            <div class="food-card-footer">
+              <div class="food-price">
+                <span class="current">$${p.price.toFixed(2)}</span>${origPrice}
+              </div>
+              <button class="add-to-cart-btn" data-pid="${p.id}">
+                <span class="plus">+</span> Add
+              </button>
+            </div>
+          </div>
+        </div>`;
+    }
+
     document.addEventListener('DOMContentLoaded', async () => {
       // Load categories
       try {
         const cats = await API.get('/api/categories');
         const catContainer = document.getElementById('homeCats');
         catContainer.innerHTML = cats.filter(c => c.id !== 'all').slice(0,12).map(c => `
-          <a href="/menu?cat=${c.id}" style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px 12px;background:white;border-radius:12px;border:1px solid var(--gray-100);transition:var(--transition);text-decoration:none;color:var(--charcoal)" onmouseover="this.style.boxShadow='var(--shadow-md)';this.style.borderColor='var(--charcoal)'" onmouseout="this.style.boxShadow='none';this.style.borderColor='var(--gray-100)'">
+          <a href="/menu?cat=${c.id}" class="cat-home-card">
             <span style="font-size:2rem">${c.icon}</span>
             <span style="font-size:.8rem;font-weight:600">${c.name}</span>
           </a>
@@ -257,62 +296,27 @@
       // Featured
       try {
         const featured = await API.get('/api/products?featured=true');
+        window._homeProducts = window._homeProducts || [];
+        featured.forEach(p => { if (!window._homeProducts.find(x => x.id === p.id)) window._homeProducts.push(p); });
         const grid = document.getElementById('featuredGrid');
-        grid.innerHTML = featured.slice(0,8).map(p => `
-          <div class="food-card" onclick="addToCartHome('${p.id}', '${p.name.replace(/'/g,'\\'')}', ${p.price}, '${p.image}', '${p.category}')">
-            <div class="food-card-img">
-              <img src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400&fit=crop'">
-              ${p.tags?.includes('bestseller') ? '<span class="food-badge badge-popular">Popular</span>' : ''}
-            </div>
-            <div class="food-card-body">
-              <div class="food-meta">
-                <span class="food-category">${p.category}</span>
-                <span class="food-rating"><span class="star">★</span> ${p.rating}</span>
-              </div>
-              <div class="food-card-name">${p.name}</div>
-              <div class="food-card-desc">${p.description}</div>
-              <div class="food-card-footer">
-                <div class="food-price"><span class="current">$${p.price.toFixed(2)}</span></div>
-                <button class="add-to-cart-btn" onclick="event.stopPropagation();addToCartHome('${p.id}','${p.name.replace(/'/g,'\\'')}',${p.price},'${p.image}','${p.category}')">
-                  <span class="plus">+</span> Add
-                </button>
-              </div>
-            </div>
-          </div>
-        `).join('');
+        grid.innerHTML = featured.slice(0,8).map(p => makeFoodCard(p, true)).join('');
       } catch {}
 
       // Popular
       try {
         const popular = await API.get('/api/products?sort=rating');
+        window._homeProducts = window._homeProducts || [];
+        popular.forEach(p => { if (!window._homeProducts.find(x => x.id === p.id)) window._homeProducts.push(p); });
         const grid = document.getElementById('popularGrid');
-        grid.innerHTML = popular.slice(0,4).map(p => `
-          <div class="food-card">
-            <div class="food-card-img">
-              <img src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400&fit=crop'">
-            </div>
-            <div class="food-card-body">
-              <div class="food-meta">
-                <span class="food-category">${p.category}</span>
-                <span class="food-rating"><span class="star">★</span> ${p.rating} <span class="count">(${p.reviews})</span></span>
-              </div>
-              <div class="food-card-name">${p.name}</div>
-              <div class="food-card-desc">${p.description}</div>
-              <div class="food-card-footer">
-                <div class="food-price"><span class="current">$${p.price.toFixed(2)}</span>${p.originalPrice ? `<span class="original">$${p.originalPrice.toFixed(2)}</span>` : ''}</div>
-                <button class="add-to-cart-btn" onclick="addToCartHome('${p.id}','${p.name.replace(/'/g,'\\'')}',${p.price},'${p.image}','${p.category}')">
-                  <span class="plus">+</span> Add
-                </button>
-              </div>
-            </div>
-          </div>
-        `).join('');
+        grid.innerHTML = popular.slice(0,4).map(p => makeFoodCard(p, false)).join('');
       } catch {}
-    });
 
-    function addToCartHome(id, name, price, image, category) {
-      Cart.add({ id, name, price, image, category });
-    }
+      // Delegate add-to-cart clicks
+      document.addEventListener('click', e => {
+        const btn = e.target.closest('.add-to-cart-btn[data-pid]');
+        if (btn) { e.stopPropagation(); addToCartHome(btn.dataset.pid); }
+      });
+    });
   </script>
 </body>
 </html>

@@ -125,7 +125,7 @@
         }
 
         container.innerHTML = orders.map(o => `
-          <div style="background:white;border-radius:var(--radius-lg);border:1px solid var(--gray-100);margin-bottom:20px;overflow:hidden">
+          <div style="background:var(--bg-card);border-radius:var(--radius-lg);border:1px solid var(--border);margin-bottom:20px;overflow:hidden">
             <!-- Order Header -->
             <div style="padding:20px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--gray-100);flex-wrap:wrap;gap:12px">
               <div>
@@ -133,11 +133,11 @@
                   <strong style="font-size:1rem">#${o.id}</strong>
                   <span class="status-badge status-${o.status}">${o.status.charAt(0).toUpperCase()+o.status.slice(1)}</span>
                 </div>
-                <div style="font-size:.8rem;color:var(--gray-500);margin-top:4px">${new Date(o.createdAt).toLocaleString('en-US',{month:'long',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'})}</div>
+                <div style="font-size:.8rem;color:var(--text-secondary);margin-top:4px">${new Date(o.createdAt).toLocaleString('en-US',{month:'long',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'})}</div>
               </div>
               <div style="text-align:right">
                 <div style="font-size:1.2rem;font-weight:700;font-family:'Playfair Display',serif">$${o.total.toFixed(2)}</div>
-                <div style="font-size:.78rem;color:var(--gray-500)">${o.items.length} item(s)</div>
+                <div style="font-size:.78rem;color:var(--text-secondary)">${o.items.length} item(s)</div>
               </div>
             </div>
 
@@ -146,24 +146,24 @@
 
             <!-- Items -->
             <div style="padding:0 24px 20px">
-              <div style="font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--gray-500);margin-bottom:12px">Items</div>
+              <div style="font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);margin-bottom:12px">Items</div>
               ${o.items.map(item => `
                 <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid var(--gray-100)">
                   <img src="${item.image}" alt="${item.name}" style="width:44px;height:44px;border-radius:8px;object-fit:cover" onerror="this.src='https://images.unsplash.com/photo-1546793665-c74683f339c1?w=100&fit=crop'">
                   <div style="flex:1">
                     <div style="font-weight:600;font-size:.875rem">${item.name}</div>
-                    <div style="font-size:.78rem;color:var(--gray-500)">× ${item.quantity}</div>
+                    <div style="font-size:.78rem;color:var(--text-secondary)">× ${item.quantity}</div>
                   </div>
                   <div style="font-weight:600;font-size:.875rem">$${(item.price * item.quantity).toFixed(2)}</div>
                 </div>
               `).join('')}
-              <div style="margin-top:16px;font-size:.85rem;color:var(--gray-500)">
+              <div style="margin-top:16px;font-size:.85rem;color:var(--text-secondary)">
                 📍 Delivered to: ${o.address}
               </div>
             </div>
           </div>
         `).join('');
-      } catch { container.innerHTML = '<p style="color:var(--gray-500);text-align:center;padding:40px">Failed to load orders</p>'; }
+      } catch { container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:40px">Failed to load orders</p>'; }
     });
   </script>
 </body>

@@ -162,13 +162,19 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin
   .mobile-nav .nav-link.active { color:var(--red) !important; background:rgba(232,34,10,.06) !important; }
 
   /* Hero compact */
-  .hero { min-height:42vh; padding:28px 0; }
-  .hero h1 { font-size:1.65rem; margin-bottom:12px; }
-  .hero p { font-size:.9rem; margin-bottom:20px; }
-  .hero-actions { gap:10px; }
-  .hero-actions .btn { padding:10px 18px; font-size:.85rem; }
-  .hero-stats { display:none; }
-  .hero-badge { font-size:.7rem; padding:4px 12px; margin-bottom:14px; }
+  /* Hero — content height, no dead space */
+  .hero { min-height:unset !important; padding:44px 0 36px !important; align-items:flex-start !important; }
+  section.hero { min-height:unset !important; padding:40px 0 32px !important; }
+  .hero-food-img { display:none; }
+  .hero-content { padding-top:0 !important; }
+  .hero h1 { font-size:1.65rem; margin-bottom:10px; }
+  .hero p { font-size:.88rem; margin-bottom:16px; }
+  .hero-actions { gap:8px; }
+  .hero-actions .btn,.hero-btn-primary,.hero-btn-outline { font-size:.85rem !important; padding:11px 20px !important; border-radius:10px !important; }
+  .hero-stats { margin-top:20px !important; padding-top:16px !important; gap:16px !important; flex-wrap:wrap; }
+  .hero-stat .value { font-size:1.2rem !important; }
+  .hero-stat .label { font-size:.68rem !important; }
+  .hero-badge { font-size:.7rem !important; padding:5px 12px !important; margin-bottom:12px; }
 
   /* ═══ 3-COL SHOPEE GRID ═══ */
   .food-grid { grid-template-columns: repeat(3,1fr); gap: 8px; }
@@ -255,11 +261,15 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin
   .mobile-nav { top:52px; }
 
   /* Hero minimal — just a banner */
-  .hero { min-height:34vh; padding:20px 0; }
-  .hero h1 { font-size:1.35rem; }
-  .hero p { display:none; }
-  .hero-badge { display:none; }
-  .hero-actions .btn { font-size:.78rem; padding:8px 14px; }
+  /* Hero 480px */
+  .hero,.hero-section { min-height:unset !important; padding:28px 0 22px !important; }
+  section.hero { padding:24px 0 18px !important; }
+  .hero h1 { font-size:1.35rem !important; }
+  .hero p { font-size:.82rem; margin-bottom:12px; }
+  .hero-badge { font-size:.68rem !important; padding:4px 10px !important; margin-bottom:10px; }
+  .hero-stats { display:none !important; }
+  .hero-actions { flex-wrap:wrap; gap:8px; }
+  .hero-btn-primary,.hero-btn-outline,.hero-actions .btn { font-size:.8rem !important; padding:9px 16px !important; }
 
   /* Categories strip */
   .cat-pill { padding:6px 12px; font-size:.72rem; }
@@ -402,11 +412,7 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin
 }
 
 @media (max-width: 480px) {
-  .hero { padding: 28px 0 24px !important; }
-  section.hero { padding: 24px 0 20px !important; }
-  .hero h1 { font-size: 1.35rem !important; }
-  .hero-stats { display: none !important; }
-  .hero p { margin-bottom: 14px; max-width: 100%; }
+  /* hero 480 handled above */
 }
 
 /* ═══════════════════════════════════════════════════
@@ -519,4 +525,33 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin
   .admin-quick-actions { grid-template-columns: repeat(2, 1fr) !important; gap: 7px !important; }
   .admin-quick-actions .btn { font-size: .75rem !important; padding: 9px 6px !important; }
   .admin-content { padding: 8px !important; }
+}
+
+/* ═══════════════════════════════════════════════════
+   HERO HEIGHT FIX — override style.css min-height:88vh
+   Applies on ALL screen sizes (desktop too if content is short)
+   ═══════════════════════════════════════════════════ */
+
+/* Desktop: allow hero to breathe but don't force 88vh gap */
+.hero {
+  min-height: unset !important;
+  padding-top: 80px !important;
+  padding-bottom: 72px !important;
+  align-items: flex-start !important;
+}
+
+/* Tablet 1024px */
+@media (max-width: 1024px) {
+  .hero { padding-top: 60px !important; padding-bottom: 52px !important; }
+}
+
+/* Phone 768px */
+@media (max-width: 768px) {
+  .hero { padding-top: 40px !important; padding-bottom: 32px !important; }
+  .hero-food-img { display: none !important; }
+}
+
+/* Small phone 480px */
+@media (max-width: 480px) {
+  .hero { padding-top: 28px !important; padding-bottom: 22px !important; }
 }

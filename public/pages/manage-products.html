@@ -38,7 +38,9 @@
     </aside>
 
     <main class="admin-main">
+      <div class="admin-sidebar-overlay" id="sidebarOverlay" onclick="toggleAdminSidebar(false)"></div>
       <div class="admin-topbar">
+        <button class="admin-sidebar-toggle" onclick="toggleAdminSidebar()" title="Menu">☰</button>
         <div class="admin-topbar-left">
           <h2 id="pageTitle">Loading...</h2>
           <p id="pageDesc" style="font-size:.78rem;color:var(--gray-500)"></p>
@@ -200,7 +202,7 @@
         </div>
         <div class="admin-card">
           <div style="overflow-x:auto">
-            <table class="admin-table">
+            <div class="admin-table-wrap"><table class="admin-table">
               <thead>
                 <tr>
                   <th>Product</th>
@@ -215,7 +217,7 @@
               <tbody id="productsBody">
                 <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--gray-300)">Loading...</td></tr>
               </tbody>
-            </table>
+            </table></div>
           </div>
         </div>`;
     }
@@ -234,14 +236,14 @@
         </div>
         <div class="admin-card">
           <div style="overflow-x:auto">
-            <table class="admin-table">
+            <div class="admin-table-wrap"><table class="admin-table">
               <thead>
                 <tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr>
               </thead>
               <tbody id="ordersBody">
                 <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--gray-300)">Loading...</td></tr>
               </tbody>
-            </table>
+            </table></div>
           </div>
         </div>`;
     }
@@ -250,14 +252,14 @@
       return `
         <div class="admin-card">
           <div style="overflow-x:auto">
-            <table class="admin-table">
+            <div class="admin-table-wrap"><table class="admin-table">
               <thead>
                 <tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Joined</th><th>Actions</th></tr>
               </thead>
               <tbody id="usersBody">
                 <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--gray-300)">Loading...</td></tr>
               </tbody>
-            </table>
+            </table></div>
           </div>
         </div>`;
     }
@@ -270,14 +272,14 @@
         </div>
         <div class="admin-card">
           <div style="overflow-x:auto">
-            <table class="admin-table">
+            <div class="admin-table-wrap"><table class="admin-table">
               <thead>
                 <tr><th>Icon</th><th>Name</th><th>Items</th><th>Actions</th></tr>
               </thead>
               <tbody id="categoriesBody">
                 <tr><td colspan="4" style="text-align:center;padding:40px;color:var(--gray-300)">Loading...</td></tr>
               </tbody>
-            </table>
+            </table></div>
           </div>
         </div>`;
     }
@@ -290,14 +292,14 @@
             <span style="font-size:.8rem;color:var(--gray-500)">Toggle offers on/off as needed</span>
           </div>
           <div style="overflow-x:auto">
-            <table class="admin-table">
+            <div class="admin-table-wrap"><table class="admin-table">
               <thead>
                 <tr><th>Title</th><th>Code</th><th>Discount</th><th>Active</th><th>Expires</th></tr>
               </thead>
               <tbody id="offersBody">
                 <tr><td colspan="5" style="text-align:center;padding:40px;color:var(--gray-300)">Loading...</td></tr>
               </tbody>
-            </table>
+            </table></div>
           </div>
         </div>`;
     }
@@ -344,6 +346,18 @@
       document.querySelectorAll('.modal-overlay').forEach(mo => {
         mo.addEventListener('click', e => { if (e.target === mo) mo.classList.remove('open'); });
       });
+    });
+  </script>
+  <script>
+    function toggleAdminSidebar(forceState) {
+      const sidebar = document.querySelector('.admin-sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      const open = forceState !== undefined ? forceState : !sidebar.classList.contains('open');
+      sidebar.classList.toggle('open', open);
+      overlay.classList.toggle('open', open);
+    }
+    document.querySelectorAll('.admin-nav-item').forEach(item => {
+      item.addEventListener('click', () => { if (window.innerWidth <= 1024) toggleAdminSidebar(false); });
     });
   </script>
 </body>

@@ -40,10 +40,9 @@
       </nav>
     </aside>
 
-    <!-- Sidebar overlay for mobile -->
-    <div class="admin-sidebar-overlay" id="sidebarOverlay" onclick="toggleAdminSidebar(false)"></div>
-
-    <!-- Main -->\n    <main class="admin-main">
+    <!-- Main -->
+    <main class="admin-main">
+      <div class="admin-sidebar-overlay" id="sidebarOverlay" onclick="toggleAdminSidebar(false)"></div>
       <div class="admin-topbar">
         <button class="admin-sidebar-toggle" onclick="toggleAdminSidebar()" title="Menu">☰</button>
         <div class="admin-topbar-left">
@@ -119,21 +118,6 @@
       if (user) {
         document.getElementById('adminUserName2').textContent = user.name;
       }
-    });
-  </script>
-  <script>
-    function toggleAdminSidebar(forceState) {
-      const sidebar = document.querySelector('.admin-sidebar');
-      const overlay = document.getElementById('sidebarOverlay');
-      const open = forceState !== undefined ? forceState : !sidebar.classList.contains('open');
-      sidebar.classList.toggle('open', open);
-      overlay.classList.toggle('open', open);
-    }
-    // Close sidebar when nav item clicked on mobile
-    document.querySelectorAll('.admin-nav-item').forEach(item => {
-      item.addEventListener('click', () => {
-        if (window.innerWidth <= 768) toggleAdminSidebar(false);
-      });
     });
   </script>
 </body>

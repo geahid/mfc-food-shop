@@ -17,7 +17,7 @@ async function loadDashboard() {
     setText('statProducts', stats.totalProducts);
     setText('statOrders', stats.totalOrders);
     setText('statUsers', stats.totalUsers);
-    setText('statRevenue', '$' + Number(stats.totalRevenue).toFixed(2));
+    setText('statRevenue', '₱' + Number(stats.totalRevenue).toFixed(2));
     setText('statPending', stats.pendingOrders);
 
     // Recent orders
@@ -59,7 +59,7 @@ function renderAdminProducts(products) {
   }
   tbody.innerHTML = products.map(p => `
     <tr>
-      <td>
+      <td data-label="Product">
         <div class="product-thumb">
           <img src="${p.image}" alt="${p.name}" onerror="this.src='https://images.unsplash.com/photo-1546793665-c74683f339c1?w=100&fit=crop'" class="table-img">
           <div class="product-thumb-info">
@@ -68,17 +68,17 @@ function renderAdminProducts(products) {
           </div>
         </div>
       </td>
-      <td><strong>${formatPrice(p.price)}</strong></td>
-      <td><span style="color:var(--gold)">★</span> ${p.rating}</td>
-      <td>${p.reviews}</td>
-      <td>
+      <td data-label="Price"><strong>${formatPrice(p.price)}</strong></td>
+      <td data-label="Rating"><span style="color:var(--gold)">★</span> ${p.rating}</td>
+      <td data-label="Reviews">${p.reviews}</td>
+      <td data-label="Available">
         <label class="toggle">
           <input type="checkbox" class="toggle-input" ${p.available ? 'checked' : ''} onchange="toggleProduct('${p.id}', this.checked)">
           <span class="toggle-track"></span>
         </label>
       </td>
-      <td>${p.featured ? '<span style="color:var(--green)">✓</span>' : '−'}</td>
-      <td>
+      <td data-label="Featured">${p.featured ? '<span style="color:var(--green)">✓</span>' : '−'}</td>
+      <td data-label="Actions">
         <div class="action-btns">
           <button class="action-btn edit" onclick="editProduct('${p.id}')" title="Edit">✏️</button>
           <button class="action-btn delete" onclick="deleteProduct('${p.id}')" title="Delete">🗑️</button>
@@ -188,22 +188,22 @@ function renderAdminOrders(orders) {
   }
   tbody.innerHTML = orders.map(o => `
     <tr>
-      <td><strong>#${o.id}</strong></td>
-      <td>
+      <td data-label="Order ID"><strong>#${o.id}</strong></td>
+      <td data-label="Customer">
         <div style="font-weight:600">${o.customerName}</div>
         <div style="font-size:.78rem;color:var(--text-secondary)">${o.customerEmail}</div>
       </td>
-      <td>${o.items.length} item(s)</td>
-      <td><strong>${formatPrice(o.total)}</strong></td>
-      <td>
-        <select onchange="updateOrderStatus('${o.id}', this.value)" style="border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:.8rem;background:var(--bg-card);cursor:pointer">
+      <td data-label="Items">${o.items.length} item(s)</td>
+      <td data-label="Total"><strong>${formatPrice(o.total)}</strong></td>
+      <td data-label="Status">
+        <select onchange="updateOrderStatus('${o.id}', this.value)" style="border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:.8rem;background:var(--bg-card);cursor:pointer;color:var(--text-primary)">
           ${['pending','confirmed','preparing','ready','delivered','cancelled'].map(s =>
             `<option value="${s}" ${o.status === s ? 'selected' : ''}>${capitalize(s)}</option>`
           ).join('')}
         </select>
       </td>
-      <td style="font-size:.82rem">${formatDateTime(o.createdAt)}</td>
-      <td>
+      <td data-label="Date" style="font-size:.82rem">${formatDateTime(o.createdAt)}</td>
+      <td data-label="Actions">
         <div class="action-btns">
           <button class="action-btn view" onclick="viewOrder('${o.id}')" title="View">👁️</button>
           <button class="action-btn delete" onclick="deleteOrder('${o.id}')" title="Delete">🗑️</button>

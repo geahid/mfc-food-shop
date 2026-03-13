@@ -17,7 +17,7 @@ async function loadDashboard() {
     setText('statProducts', stats.totalProducts);
     setText('statOrders', stats.totalOrders);
     setText('statUsers', stats.totalUsers);
-    setText('statRevenue', '₱' + Number(stats.totalRevenue).toFixed(2));
+    setText('statRevenue', '$' + Number(stats.totalRevenue).toFixed(2));
     setText('statPending', stats.pendingOrders);
 
     // Recent orders
@@ -54,7 +54,7 @@ function renderAdminProducts(products) {
   const tbody = document.getElementById('productsBody');
   if (!tbody) return;
   if (products.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--gray-300)">No products found</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted)">No products found</td></tr>`;
     return;
   }
   tbody.innerHTML = products.map(p => `
@@ -183,7 +183,7 @@ function renderAdminOrders(orders) {
   const tbody = document.getElementById('ordersBody');
   if (!tbody) return;
   if (orders.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--gray-300)">No orders found</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted)">No orders found</td></tr>`;
     return;
   }
   tbody.innerHTML = orders.map(o => `
@@ -191,12 +191,12 @@ function renderAdminOrders(orders) {
       <td><strong>#${o.id}</strong></td>
       <td>
         <div style="font-weight:600">${o.customerName}</div>
-        <div style="font-size:.78rem;color:var(--gray-500)">${o.customerEmail}</div>
+        <div style="font-size:.78rem;color:var(--text-secondary)">${o.customerEmail}</div>
       </td>
       <td>${o.items.length} item(s)</td>
       <td><strong>${formatPrice(o.total)}</strong></td>
       <td>
-        <select onchange="updateOrderStatus('${o.id}', this.value)" style="border:1px solid var(--gray-100);border-radius:6px;padding:4px 8px;font-size:.8rem;background:white;cursor:pointer">
+        <select onchange="updateOrderStatus('${o.id}', this.value)" style="border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:.8rem;background:var(--bg-card);cursor:pointer">
           ${['pending','confirmed','preparing','ready','delivered','cancelled'].map(s =>
             `<option value="${s}" ${o.status === s ? 'selected' : ''}>${capitalize(s)}</option>`
           ).join('')}
@@ -247,16 +247,16 @@ function viewOrder(id) {
     </div>
     <div style="margin-bottom:16px"><strong>Address:</strong> ${o.address}${o.city ? ', ' + o.city : ''}</div>
     <table style="width:100%;border-collapse:collapse;font-size:.875rem;margin-bottom:16px">
-      <thead><tr style="background:var(--gray-50)"><th style="padding:10px;text-align:left">Item</th><th style="padding:10px;text-align:center">Qty</th><th style="padding:10px;text-align:right">Price</th></tr></thead>
-      <tbody>${o.items.map(i => `<tr><td style="padding:10px;border-top:1px solid var(--gray-100)">${i.name}</td><td style="padding:10px;border-top:1px solid var(--gray-100);text-align:center">×${i.quantity}</td><td style="padding:10px;border-top:1px solid var(--gray-100);text-align:right">${formatPrice(i.price * i.quantity)}</td></tr>`).join('')}</tbody>
+      <thead><tr style="background:var(--bg-elevated)"><th style="padding:10px;text-align:left">Item</th><th style="padding:10px;text-align:center">Qty</th><th style="padding:10px;text-align:right">Price</th></tr></thead>
+      <tbody>${o.items.map(i => `<tr><td style="padding:10px;border-top:1px solid var(--border)">${i.name}</td><td style="padding:10px;border-top:1px solid var(--border);text-align:center">×${i.quantity}</td><td style="padding:10px;border-top:1px solid var(--border);text-align:right">${formatPrice(i.price * i.quantity)}</td></tr>`).join('')}</tbody>
     </table>
     <div style="display:flex;flex-direction:column;gap:6px;font-size:.875rem;max-width:240px;margin-left:auto">
       <div style="display:flex;justify-content:space-between"><span>Subtotal</span><span>${formatPrice(o.subtotal)}</span></div>
       <div style="display:flex;justify-content:space-between"><span>Tax</span><span>${formatPrice(o.tax)}</span></div>
       <div style="display:flex;justify-content:space-between"><span>Delivery</span><span>${formatPrice(o.deliveryFee)}</span></div>
-      <div style="display:flex;justify-content:space-between;font-weight:700;font-size:1rem;padding-top:8px;border-top:1px solid var(--gray-100)"><span>Total</span><span>${formatPrice(o.total)}</span></div>
+      <div style="display:flex;justify-content:space-between;font-weight:700;font-size:1rem;padding-top:8px;border-top:1px solid var(--border)"><span>Total</span><span>${formatPrice(o.total)}</span></div>
     </div>
-    ${o.notes ? `<div style="margin-top:16px;padding:12px;background:var(--gray-50);border-radius:8px;font-size:.875rem"><strong>Notes:</strong> ${o.notes}</div>` : ''}
+    ${o.notes ? `<div style="margin-top:16px;padding:12px;background:var(--bg-elevated);border-radius:8px;font-size:.875rem"><strong>Notes:</strong> ${o.notes}</div>` : ''}
   `;
   modal?.classList.add('open');
 }
@@ -342,7 +342,7 @@ async function loadAdminOffers() {
     tbody.innerHTML = offers.map(o => `
       <tr>
         <td><strong>${o.title}</strong></td>
-        <td><code style="background:var(--gray-50);padding:2px 8px;border-radius:4px;font-size:.85rem">${o.code}</code></td>
+        <td><code style="background:var(--bg-elevated);padding:2px 8px;border-radius:4px;font-size:.85rem">${o.code}</code></td>
         <td>${o.type === 'percentage' ? o.discount + '%' : o.type === 'fixed' ? formatPrice(o.discount) : 'Free Delivery'}</td>
         <td>
           <label class="toggle">

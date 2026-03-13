@@ -44,8 +44,8 @@
     <main class="admin-main">
       <div class="admin-sidebar-overlay" id="sidebarOverlay" onclick="toggleAdminSidebar(false)"></div>
       <div class="admin-topbar">
-        <button class="admin-sidebar-toggle" onclick="toggleAdminSidebar()" title="Menu">☰</button>
         <div class="admin-topbar-left">
+          <button class="admin-sidebar-toggle" onclick="toggleAdminSidebar()">☰</button>
           <h2>Dashboard</h2>
           <p>Welcome back, <span id="adminUserName">Admin</span></p>
         </div>
@@ -82,7 +82,7 @@
         <!-- Quick Actions -->
         <div class="admin-card" style="margin-bottom:24px">
           <div class="admin-card-header"><h3>Quick Actions</h3></div>
-          <div class="admin-card-body" style="display:flex;gap:12px;flex-wrap:wrap">
+          <div class="admin-card-body admin-quick-actions">
             <a href="/admin/products" class="btn btn-primary btn-sm">+ Add Product</a>
             <a href="/admin/orders" class="btn btn-outline btn-sm">View Orders</a>
             <a href="/admin/users" class="btn btn-outline btn-sm">Manage Users</a>
@@ -118,6 +118,18 @@
       if (user) {
         document.getElementById('adminUserName2').textContent = user.name;
       }
+    });
+  </script>
+  <script>
+    function toggleAdminSidebar(forceState) {
+      const sidebar = document.querySelector('.admin-sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      const open = forceState !== undefined ? forceState : !sidebar.classList.contains('open');
+      sidebar.classList.toggle('open', open);
+      overlay.classList.toggle('open', open);
+    }
+    document.querySelectorAll('.admin-nav-item').forEach(item => {
+      item.addEventListener('click', () => { if (window.innerWidth <= 1024) toggleAdminSidebar(false); });
     });
   </script>
 </body>

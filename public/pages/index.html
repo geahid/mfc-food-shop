@@ -298,6 +298,7 @@
     .add-to-cart-btn:active { transform:scale(.95); }
 
     /* How it works cards fire hover */
+    .hiw-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
     .hiw-card {
       text-align:center;padding:40px 24px;
       background:var(--bg-card);border:1px solid var(--border);
@@ -447,7 +448,7 @@
           <h2>How It Works</h2>
           <p>From menu to your doorstep in three simple steps</p>
         </div>
-        <div class="grid-3" style="margin-top:8px;gap:20px">
+        <div class="hiw-row" style="margin-top:8px;gap:20px">
           <div class="hiw-card reveal reveal-delay-1">
             <span class="hiw-icon">🍽️</span>
             <h3 style="margin-bottom:10px;color:var(--text-primary)">Browse Menu</h3>

@@ -366,3 +366,157 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin
   .hide-mobile { display:none; }
   .show-mobile { display:block; }
 }
+
+/* ═══════════════════════════════════════════════════
+   HERO — remove top dead space on mobile
+   ═══════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Hero should be just tall enough for content, not 90vh */
+  .hero {
+    min-height: unset !important;
+    height: auto !important;
+    padding: 40px 0 36px !important;
+    align-items: flex-start !important;
+  }
+  /* index.html custom hero class too */
+  section.hero {
+    min-height: unset !important;
+    padding: 36px 0 32px !important;
+  }
+  .hero-content { padding-top: 0 !important; }
+  .hero-food-img { display: none; }
+  .hero h1 { font-size: 1.6rem !important; line-height: 1.15; margin-bottom: 10px; }
+  .hero p { font-size: .88rem !important; margin-bottom: 16px; }
+  .hero-badge { font-size: .7rem !important; padding: 5px 12px !important; margin-bottom: 14px; }
+  .hero-actions { gap: 8px; }
+  .hero-btn-primary, .hero-btn-outline,
+  .hero-actions .btn { font-size: .85rem !important; padding: 11px 20px !important; border-radius: 10px !important; }
+  .hero-stats {
+    margin-top: 24px !important;
+    padding-top: 18px !important;
+    gap: 16px !important;
+    flex-wrap: wrap;
+  }
+  .hero-stat .value { font-size: 1.25rem !important; }
+  .hero-stat .label { font-size: .68rem !important; }
+}
+
+@media (max-width: 480px) {
+  .hero { padding: 28px 0 24px !important; }
+  section.hero { padding: 24px 0 20px !important; }
+  .hero h1 { font-size: 1.35rem !important; }
+  .hero-stats { display: none !important; }
+  .hero p { margin-bottom: 14px; max-width: 100%; }
+}
+
+/* ═══════════════════════════════════════════════════
+   HOW IT WORKS — always 1 row on mobile (3 cards in a row)
+   ═══════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Override the grid-3 that becomes 2-col at 768px for hiw cards */
+  .hiw-row {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 10px !important;
+  }
+  .hiw-card {
+    padding: 20px 12px !important;
+    border-radius: 12px !important;
+  }
+  .hiw-icon { font-size: 2rem !important; margin-bottom: 10px !important; }
+  .hiw-card h3 { font-size: .85rem !important; margin-bottom: 6px !important; }
+  .hiw-card p { font-size: .72rem !important; line-height: 1.5 !important; }
+}
+
+@media (max-width: 480px) {
+  .hiw-row {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 7px !important;
+  }
+  .hiw-card { padding: 14px 8px !important; }
+  .hiw-icon { font-size: 1.6rem !important; margin-bottom: 8px !important; }
+  .hiw-card h3 { font-size: .76rem !important; }
+  .hiw-card p { display: none; }
+}
+
+/* Fallback: if hiw-row class not present, target grid-3 inside section */
+@media (max-width: 768px) {
+  .section .grid-3:has(.hiw-card) {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 10px !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   ADMIN DASHBOARD — fit everything on mobile
+   ═══════════════════════════════════════════════════ */
+
+/* Stats: 2x2 grid on mobile, full width */
+@media (max-width: 768px) {
+  .admin-wrapper { overflow-x: hidden; }
+  .admin-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    margin-bottom: 16px !important;
+  }
+  .stat-card {
+    padding: 14px 12px !important;
+    gap: 10px !important;
+    overflow: hidden;
+  }
+  .stat-icon { width: 36px !important; height: 36px !important; font-size: .9rem !important; flex-shrink: 0; }
+  .stat-value { font-size: 1.1rem !important; }
+  .stat-label { font-size: .72rem !important; }
+  .stat-change { font-size: .68rem !important; }
+
+  /* Quick actions — 2x2 grid, full-width buttons */
+  .admin-quick-actions {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+  .admin-quick-actions .btn {
+    width: 100% !important;
+    justify-content: center !important;
+    font-size: .8rem !important;
+    padding: 10px 8px !important;
+    white-space: nowrap;
+  }
+
+  /* Recent orders table → cards */
+  .admin-content { padding: 12px !important; }
+  .admin-card { margin-bottom: 12px !important; }
+  .admin-card-header { padding: 14px 14px 0 !important; }
+  .admin-card-header h3 { font-size: .95rem !important; }
+  .admin-card-body { padding: 12px 14px !important; }
+
+  /* Topbar — title centered, toggle left, actions right */
+  .admin-topbar {
+    display: grid !important;
+    grid-template-columns: 40px 1fr auto !important;
+    align-items: center !important;
+    gap: 10px !important;
+    padding: 0 12px !important;
+    height: 56px !important;
+  }
+  .admin-topbar-left h2 {
+    font-size: .95rem !important;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .admin-topbar-left p { display: none !important; }
+}
+
+@media (max-width: 480px) {
+  .admin-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+  .stat-card { padding: 12px 10px !important; }
+  .stat-value { font-size: 1rem !important; }
+  .admin-quick-actions { grid-template-columns: repeat(2, 1fr) !important; gap: 7px !important; }
+  .admin-quick-actions .btn { font-size: .75rem !important; padding: 9px 6px !important; }
+  .admin-content { padding: 8px !important; }
+}

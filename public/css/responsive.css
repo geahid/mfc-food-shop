@@ -144,7 +144,7 @@
   .hero-stats { gap: 20px; flex-wrap: wrap; }
   .grid-2 { grid-template-columns: 1fr; }
   .grid-3 { grid-template-columns: 1fr 1fr; }
-  .food-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+  .food-grid { grid-template-columns: repeat(4, 1fr); gap: 10px; }
   .promo-grid { grid-template-columns: 1fr; }
   .cart-sidebar { width: 100%; right: -100%; }
   .footer-grid { grid-template-columns: 1fr; gap: 24px; }
@@ -193,7 +193,7 @@
   .hero-actions .btn { width: 100%; justify-content: center; }
   .hero-stats { display: none; }
 
-  .food-grid { grid-template-columns: 1fr; gap: 14px; }
+  .food-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
   .grid-3, .grid-4 { grid-template-columns: 1fr; }
   .auth-card { padding: 24px 18px; }
   .payment-options { flex-direction: column; }
@@ -258,3 +258,111 @@
 input[type=number] { -moz-appearance: textfield; }
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+/* ============================================
+   FOOD CARD — COMPACT ON MOBILE (match PC look)
+   ============================================ */
+@media (max-width: 768px) {
+  /* Shorter image so card matches PC proportions */
+  .food-card-img { aspect-ratio: 3/2; }
+  .food-card-body { padding: 12px; }
+  .food-card-name { font-size: .9rem; }
+  .food-card-desc { font-size: .78rem; -webkit-line-clamp: 2; margin-bottom: 10px; }
+  .food-price .current { font-size: 1rem; }
+  .food-price .original { font-size: .75rem; }
+  .add-to-cart-btn { padding: 7px 12px; font-size: .78rem; gap: 4px; }
+  .add-to-cart-btn .plus { font-size: .9rem; }
+  .food-meta { margin-bottom: 4px; }
+  .food-category { font-size: .68rem; }
+  .food-rating { font-size: .75rem; }
+  .food-badge { font-size: .62rem; padding: 3px 8px; }
+}
+
+@media (max-width: 480px) {
+  /* Even more compact on small phones */
+  .food-card-img { aspect-ratio: 16/10; }
+  .food-card-body { padding: 10px; }
+  .food-card-name { font-size: .85rem; }
+  .food-card-desc { font-size: .75rem; -webkit-line-clamp: 1; margin-bottom: 8px; }
+  .food-price .current { font-size: .95rem; }
+  .add-to-cart-btn { padding: 6px 10px; font-size: .75rem; }
+  .food-card-footer { gap: 4px; }
+
+  /* Food grid gap tighter */
+  .food-grid { gap: 8px; }
+
+  /* Section headers smaller */
+  .section-header { margin-bottom: 16px; }
+  .section-label { font-size: .7rem; }
+}
+
+/* On very small phones 360px — still 2 col but tighter */
+@media (max-width: 360px) {
+  .food-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .food-card-body { padding: 8px; }
+  .food-card-name { font-size: .8rem; }
+  .add-to-cart-btn { padding: 5px 8px; font-size: .72rem; }
+}
+
+/* ============================================
+   NAVBAR — TABLET (768-1024px) keep full links visible
+   ============================================ */
+@media (min-width: 769px) and (max-width: 1024px) {
+  /* Show nav links on tablet, just smaller */
+  .navbar-nav { display: flex; gap: 4px; }
+  .nav-link { font-size: .82rem; padding: 6px 10px; }
+  /* Hide sign-in but keep cart */
+  .navbar-actions .btn { display: none; }
+  /* Shrink navbar height slightly */
+  .navbar { height: 60px; }
+  .navbar-inner { height: 60px; }
+  .page-content { padding-top: 60px; }
+  .categories-strip { top: 60px; }
+}
+
+/* ============================================
+   CONTAINER WIDTH — scale nicely on tablet
+   ============================================ */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .container { max-width: 960px; padding: 0 20px; }
+  .food-grid { grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .food-card-img { aspect-ratio: 4/3; }
+  .food-card-body { padding: 14px; }
+  html { font-size: 14.5px; }
+}
+
+/* ============================================
+   4-COLUMN ULTRA COMPACT CARDS
+   ============================================ */
+@media (max-width: 1024px) {
+  .food-card-img { aspect-ratio: 1/1; }
+  .food-card-body { padding: 8px; }
+  .food-card-name { font-size: .78rem; -webkit-line-clamp: 1; }
+  .food-card-desc { display: none; }
+  .food-price .current { font-size: .88rem; }
+  .food-price .original { display: none; }
+  .add-to-cart-btn { padding: 6px 8px; font-size: .72rem; gap: 2px; }
+  .add-to-cart-btn .plus { font-size: .85rem; }
+  .food-meta { font-size: .68rem; margin-bottom: 3px; }
+  .food-category { font-size: .62rem; }
+  .food-rating { font-size: .68rem; }
+  .food-rating .count { display: none; }
+  .food-badge { font-size: .58rem; padding: 2px 6px; }
+  .food-card-footer { flex-wrap: wrap; gap: 4px; }
+}
+
+@media (max-width: 480px) {
+  .food-card-img { aspect-ratio: 1/1; }
+  .food-card-body { padding: 6px; }
+  .food-card-name { font-size: .72rem; }
+  .food-price .current { font-size: .82rem; }
+  .add-to-cart-btn { padding: 5px 7px; font-size: .68rem; width: 100%; justify-content: center; }
+  .food-card-footer { flex-direction: column; align-items: flex-start; gap: 4px; }
+}
+
+@media (max-width: 360px) {
+  .food-card-body { padding: 5px; }
+  .food-card-name { font-size: .68rem; }
+  .food-price .current { font-size: .78rem; }
+  .add-to-cart-btn { font-size: .65rem; padding: 4px 6px; }
+}

@@ -1,7 +1,7 @@
 {
   "name": "mfc-food-shop",
-  "version": "1.0.0",
-  "description": "MFC Food Shop - Professional Food Ordering Web Application",
+  "version": "2.0.0",
+  "description": "MFC Food Shop - Now powered by MySQL (XAMPP)",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "express": "^4.18.2",
+    "mysql2": "^3.6.0",
     "uuid": "^9.0.0"
   }
 }
